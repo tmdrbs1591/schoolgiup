@@ -16,6 +16,8 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] BoxCollider2D hurtBox;
 
+    [SerializeField] GameObject hitParticle;
+
     private Transform player;
 
     void Awake()
@@ -96,12 +98,18 @@ public class EnemyAI : MonoBehaviour
     bool canBeHurt = true;
     int health = 2;
 
+    void Update() {
+        spriteRenderer.transform.localScale = Vector3.Lerp(spriteRenderer.transform.localScale,new Vector3(1.2479f,1.2479f,1),Time.deltaTime * 5);
+    }
+
     void Hurt(Transform collisionTransform) {
         if (!canBeHurt) return;
         PlayerScript.instance.camShake += 0.2f;
         canBeHurt = false;
         rigid.velocity = new Vector2((collisionTransform.position.x > transform.position.x?4:-4), 5);
+        spriteRenderer.transform.localScale /= 2;
         health--;
+        Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 5);
         if (health <= 0) Destroy(gameObject);
     }
 

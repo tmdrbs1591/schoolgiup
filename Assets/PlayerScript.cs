@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine.Utility;
+using Cinemachine;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]Animator weaponAnimation;
     BoxCollider2D boxCollider;
     Camera cam;
+    [SerializeField]CinemachineCameraOffset offset;
 
     Vector2 spd;
     float coolDown;
@@ -41,7 +44,6 @@ public class PlayerScript : MonoBehaviour
 
     Rigidbody2D rb;
 
-    Vector3 cameraPosition;
     public float camShake;
 
     bool[] inputBuffer = new bool[2];
@@ -59,8 +61,7 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
         if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
 
-        //cameraPosition = Vector3.Lerp(cameraPosition, new Vector3(transform.position.x + spd.x / 5, transform.position.y + 1, cam.transform.position.z), Time.deltaTime * 10);
-        //cam.transform.position = cameraPosition + new Vector3(Random.Range(-camShake,camShake),Random.Range(-camShake,camShake),0);
+        offset.m_Offset = new Vector3(Random.Range(-camShake,camShake),Random.Range(-camShake,camShake),0);
 
         sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
         sprite.color = new Color(1,1,1,(coolDown>0?0.4f:1));
@@ -69,7 +70,7 @@ public class PlayerScript : MonoBehaviour
         if (coolDown>0) coolDown -= Time.deltaTime;
         
         weaponSprite.flipX = dir == -1;
-        weaponSprite.transform.localPosition = new Vector3(0.7f * dir, -0.2f, 0.1f);
+        weaponSprite.transform.localPosition = new Vector3(0.7f * dir, -0.2f, -1);
         weaponSprite.transform.eulerAngles = Vector3.forward * -spd.y * dir;
 
         if (attackTimer > 0) attackTimer -= Time.deltaTime;
@@ -93,7 +94,7 @@ public class PlayerScript : MonoBehaviour
 
     void Attack() {
         if (attackCooldown > 0) return;
-        hurtBox.transform.localPosition = Vector3.right * dir;
+        hurtBox.transform.localPosition = Vector3.right * dir * 1.75f;
         movespeed += 5;
         attackTimer = 0.1f;
         attackCooldown = 0.3f;
