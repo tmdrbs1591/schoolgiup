@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] float hitRange = 1.0f;
     [SerializeField] int nextMove;
     public bool attacking;
+    float attackTime;
 
     [SerializeField] BoxCollider2D hurtBox;
 
@@ -20,49 +21,56 @@ public class EnemyAI : MonoBehaviour
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         InvokeRepeating("Think", 3f, 1.5f); // ���� �ð����� Think �Լ� ȣ��
 
     }
 
-    void Attack() {
-        if (attacking) return;
+    IEnumerator Attack() {
+        if (attacking) yield break;
         attacking = true;
-        rigid.velocity = new Vector2(nextMove * moveSpeed * 3, rigid.velocity.y);
+        bool direction = player.position.x > transform.position.x;
+        rigid.velocity = new Vector2((direction?-1:1) * 2, rigid.velocity.y);
+        yield return new WaitForSeconds(0.8f);
+        hurtBox.gameObject.SetActive(true);
+        hurtBox.transform.localPosition = new Vector3((direction?0.5f:-0.5f),0,0);
+        for (float i = 1; i > 0; i -= Time.deltaTime) {
+            rigid.velocity = new Vector2((direction?1:-1) * i * 8, rigid.velocity.y);
+            yield return null;
+        }
+        hurtBox.gameObject.SetActive(false);
+        attacking = false;
+        yield break;
     }
 
     void FixedUpdate()
     {
-        hurtBox.gameObject.SetActive(attacking);
-        if (attacking) {
-            rigid.velocity = new Vector2(rigid.velocity.x / 1.05f, rigid.velocity.y);
-            if (rigid.velocity.x <= 0.5f)
-                attacking = false;
-            return;
-        }
+        if (attacking) return;
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         if (distanceToPlayer <= detectionRange)
         {
-            // �÷��̾ ���� ���� ���� ������ �÷��̾� ������ �̵�
-            if (player.position.x > transform.position.x)
+            if (player.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(player.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
+                rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 15);
+            if (Mathf.Abs(rigid.velocity.y) > 0.2f)
+                return;
+            canBeHurt = true;
+            if (Mathf.Abs(player.position.x - transform.position.x) <= hitRange) {
+                StartCoroutine(Attack());
+                return;
+            }
+            if (player.position.x > transform.position.x) 
                 nextMove = 1;
             else
                 nextMove = -1;
-
-            if (Mathf.Abs(player.position.x - transform.position.x) <= hitRange && Mathf.Abs(player.position.y - transform.position.y) <= 1) {
-                attacking = true;
-            }
         }
 
 
         rigid.velocity = new Vector2(nextMove * moveSpeed, rigid.velocity.y);
 
         Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.3f, rigid.position.y);
-        Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
-        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1);
-        if (rayHit.collider == null)
+        if (!Physics2D.Raycast(frontVec, Vector3.down, 1))
         {
             nextMove *= -1;
             CancelInvoke();
@@ -77,6 +85,24 @@ public class EnemyAI : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "WeaponHurtBox")
+            Hurt(collision.transform);
+    }
+
+    bool canBeHurt = true;
+    int health = 2;
+
+    void Hurt(Transform collisionTransform) {
+        if (!canBeHurt) return;
+        PlayerScript.instance.camShake += 0.2f;
+        canBeHurt = false;
+        rigid.velocity = new Vector2((collisionTransform.position.x > transform.position.x?4:-4), 5);
+        health--;
+        if (health <= 0) Destroy(gameObject);
     }
 
     void Think()
