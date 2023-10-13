@@ -9,6 +9,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
 
+    SpriteRenderer sprite;
     BoxCollider2D boxCollider;
     Camera cam;
 
@@ -36,6 +37,7 @@ public class PlayerScript : MonoBehaviour
     {
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
+        sprite = gameObject.GetComponentInChildren<SpriteRenderer>();
         cam = Camera.main;
     }
 
@@ -44,6 +46,7 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
         if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
         cam.transform.position = Vector3.Lerp(cam.transform.position, new Vector3(transform.position.x, transform.position.y + 1, cam.transform.position.z), Time.deltaTime * 10);
+        sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
     }
 
     // Update is called once per frame
@@ -62,6 +65,7 @@ public class PlayerScript : MonoBehaviour
                     spd.y = jumpSpeed;
                     groundState = 0;
                     jumped = true;
+                    sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
                 }
                 if (moveInput == 0)
                 {
@@ -94,7 +98,7 @@ public class PlayerScript : MonoBehaviour
                 }
                 if (jumped && !Input.GetButton("Jump") && spd.y > 0)
                 {
-                    spd.y /= 2;
+                    spd.y -= gravity;
                 }
                 if (inputBuffer[0] && jumped)
                 {
