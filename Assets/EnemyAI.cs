@@ -7,10 +7,13 @@ public class EnemyAI : MonoBehaviour
 {
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
-    public float moveSpeed = 3.0f;
-    public float detectionRange = 1.0f;
-    public int nextMove;
+    [SerializeField] float moveSpeed = 3.0f;
+    [SerializeField] float detectionRange = 1.0f;
+    [SerializeField] float hitRange = 1.0f;
+    [SerializeField] int nextMove;
+    public bool attacking;
 
+    [SerializeField] BoxCollider2D hurtBox;
 
     private Transform player;
 
@@ -20,21 +23,37 @@ public class EnemyAI : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        InvokeRepeating("Think", 3f, 1.5f); // ÀÏÁ¤ ½Ã°£¸¶´Ù Think ÇÔ¼ö È£Ãâ
+        InvokeRepeating("Think", 3f, 1.5f); // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ Think ï¿½Ô¼ï¿½ È£ï¿½ï¿½
 
+    }
 
+    void Attack() {
+        if (attacking) return;
+        attacking = true;
+        rigid.velocity = new Vector2(nextMove * moveSpeed * 3, rigid.velocity.y);
     }
 
     void FixedUpdate()
     {
+        hurtBox.gameObject.SetActive(attacking);
+        if (attacking) {
+            rigid.velocity = new Vector2(rigid.velocity.x / 1.05f, rigid.velocity.y);
+            if (rigid.velocity.x <= 0.5f)
+                attacking = false;
+            return;
+        }
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         if (distanceToPlayer <= detectionRange)
         {
-            // ÇÃ·¹ÀÌ¾î°¡ ÀÏÁ¤ ¹üÀ§ ³»¿¡ ÀÖÀ¸¸é ÇÃ·¹ÀÌ¾î ÂÊÀ¸·Î ÀÌµ¿
+            // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
             if (player.position.x > transform.position.x)
                 nextMove = 1;
             else
                 nextMove = -1;
+
+            if (Mathf.Abs(player.position.x - transform.position.x) <= hitRange && Mathf.Abs(player.position.y - transform.position.y) <= 1) {
+                attacking = true;
+            }
         }
 
 
@@ -42,7 +61,7 @@ public class EnemyAI : MonoBehaviour
 
         Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.3f, rigid.position.y);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
-        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1);
         if (rayHit.collider == null)
         {
             nextMove *= -1;

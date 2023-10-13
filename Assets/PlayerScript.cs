@@ -54,6 +54,7 @@ public class PlayerScript : MonoBehaviour
         cam.transform.position = Vector3.Lerp(cam.transform.position, new Vector3(transform.position.x, transform.position.y + 1, cam.transform.position.z), Time.deltaTime * 10);
         sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
         if (coolDown>0) coolDown -= Time.deltaTime;
+        sprite.flipX = dir == -1;
     }
 
     public void Hurt() {
@@ -124,6 +125,7 @@ public class PlayerScript : MonoBehaviour
             case State.hurt:
                 spd.y -= gravity;
                 if (groundState == -1) state = State.normal;
+                break;
         }
         rb.velocity = spd;
 
@@ -134,6 +136,12 @@ public class PlayerScript : MonoBehaviour
     {
         if (Mathf.Abs(rb.velocity.y) < 0.03f) //check velocity.y is 0
             groundState = (spd.y > 0 ? 1 : -1);
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "HurtBox")
+            Hurt();
     }
 
     private void OnCollisionExit2D(Collision2D collision)
