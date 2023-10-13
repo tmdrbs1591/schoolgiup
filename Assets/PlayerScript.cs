@@ -4,22 +4,27 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    static PlayerScript instance;
 
     [SerializeField] float gravity;
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
+
+    int health = 3;
 
     SpriteRenderer sprite;
     BoxCollider2D boxCollider;
     Camera cam;
 
     Vector2 spd;
+    float coolDown;
 
     enum State
     {
         normal,
         air,
-        attack
+        attack,
+        hurt
     }
 
     [SerializeField] State state = State.normal;
@@ -35,6 +40,7 @@ public class PlayerScript : MonoBehaviour
 
     void Start()
     {
+        instance = this;
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         sprite = gameObject.GetComponentInChildren<SpriteRenderer>();
@@ -47,6 +53,13 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
         cam.transform.position = Vector3.Lerp(cam.transform.position, new Vector3(transform.position.x, transform.position.y + 1, cam.transform.position.z), Time.deltaTime * 10);
         sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
+        if (coolDown>0) coolDown -= Time.deltaTime;
+    }
+
+    public void Hurt() {
+        if (coolDown > 0) return;
+        state = State.hurt;
+        spd.y = 5;
     }
 
     // Update is called once per frame
@@ -108,6 +121,9 @@ public class PlayerScript : MonoBehaviour
                 spd.x = movespeed * dir;
                 spd.y -= gravity;
                 break;
+            case State.hurt:
+                spd.y -= gravity;
+                if (groundState == -1) state = State.normal;
         }
         rb.velocity = spd;
 
