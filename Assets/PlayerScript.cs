@@ -50,6 +50,9 @@ public class PlayerScript : MonoBehaviour
 
     bool[] inputBuffer = new bool[2];
 
+    public int comboCount;
+    public float comboTime;
+
     void Start()
     {
         instance = this;
@@ -60,6 +63,12 @@ public class PlayerScript : MonoBehaviour
 
     public void Hit(bool kill = false) {
         Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
+        if (kill) {
+            comboCount++;
+            comboTime = 6;
+        } else {
+            comboTime += 1;
+        }
     }
 
     private void Update()
@@ -88,6 +97,11 @@ public class PlayerScript : MonoBehaviour
             camShake -= Time.deltaTime;
             if (camShake <= 0)
                 camShake = 0;
+        }
+        
+        if (comboCount > 0) {
+            comboTime -= Time.deltaTime;
+            if (comboTime <= 0) comboCount = 0;
         }
     }
 
