@@ -27,7 +27,7 @@ public class ArenaDoorScript : MonoBehaviour
         health--;
         if (health <= 0) {
             PlayerScript.instance.comboTime = 6;
-            Instantiate(arenas[Random.Range(0,arenas.Length)],transform.parent.parent).transform.position = transform.position;
+            Instantiate(arenas[Random.Range(0,arenas.Length)],transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
             Destroy(gameObject);
         }
     }

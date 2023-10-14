@@ -34,7 +34,7 @@ public class EnemyBase : MonoBehaviour
     }
 
     public int maxHealth = 2;
-    public int health;
+    public float health;
 
     void Update() {
         spriteRenderer.transform.localScale = Vector3.Lerp(spriteRenderer.transform.localScale,new Vector3(1.2479f,1.2479f,1),Time.deltaTime * 5);
@@ -48,7 +48,8 @@ public class EnemyBase : MonoBehaviour
         hurtCooldown = 0.5f;
         rigid.velocity = new Vector2(PlayerScript.instance.dir * 4, 5);
         spriteRenderer.transform.localScale /= 2;
-        health--;
+        PlayerScript.instance.DamageCalculation();
+        health -= PlayerScript.instance.damageOutput;
         healthBar.value = (float)health / (float)maxHealth;
         Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 5);
         if (health <= 0) {

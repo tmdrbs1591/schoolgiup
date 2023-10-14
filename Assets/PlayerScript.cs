@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]CinemachineCameraOffset offset;
 
     [SerializeField]GameObject hitEffect;
+    [SerializeField]GameObject critEffect;
 
     Vector2 spd;
     float coolDown;
@@ -53,6 +54,8 @@ public class PlayerScript : MonoBehaviour
     public int comboCount;
     public float comboTime;
 
+    public float damageOutput;
+
     void Start()
     {
         instance = this;
@@ -61,8 +64,22 @@ public class PlayerScript : MonoBehaviour
         cam = Camera.main;
     }
 
+    public void DamageCalculation() {
+        crit = (int)Random.Range(Mathf.Min(comboCount,50),60) >= 45;
+        damageOutput = crit ? 5:1;
+    }
+
+    bool crit = false;
+
     public void Hit(bool kill = false) {
-        Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
+        AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),0.8f);
+        if (crit) {
+            Instantiate(critEffect,weaponSprite.transform.position,Quaternion.identity);
+            AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),0.8f);
+        }
+        else {
+            Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
+        }
         if (kill) {
             comboCount++;
             comboTime = 6;
@@ -71,7 +88,6 @@ public class PlayerScript : MonoBehaviour
             comboTime += 1;
             camShake = 0.2f;
         }
-        AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),0.8f);
         StartCoroutine(Hitstun(0.1f));
     }
 
@@ -127,6 +143,7 @@ public class PlayerScript : MonoBehaviour
 
     void Attack() {
         if (attackCooldown > 0) return;
+        AudioScript.instance.PlaySound(transform.position,2,Random.Range(0.9f,1.1f),1);
         hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
         movespeed = 20;
         attackTimer = 0.1f;
@@ -153,7 +170,7 @@ public class PlayerScript : MonoBehaviour
                     groundState = 0;
                     jumped = true;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
-                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.5f);
+                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.7f);
                 }
                 if (inputBuffer[1])
                     Attack();
@@ -199,6 +216,7 @@ public class PlayerScript : MonoBehaviour
                     jumped = false;
                     spd.y = jumpSpeed;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
+                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.7f);
                 }
                 if (inputBuffer[1])
                     Attack();
