@@ -65,7 +65,7 @@ public class PlayerScript : MonoBehaviour
     }
 
     public void DamageCalculation() {
-        crit = (int)Random.Range(Mathf.Min(comboCount,50),60) >= 45;
+        crit = (int)Random.Range(Mathf.Min(comboCount,50),60) >= 55;
         damageOutput = crit ? 5:1;
     }
 
@@ -73,9 +73,13 @@ public class PlayerScript : MonoBehaviour
 
     public void Hit(bool kill = false) {
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),0.8f);
+        float shake = 0;
+        float stunTime = 0.1f;
         if (crit) {
             Instantiate(critEffect,weaponSprite.transform.position,Quaternion.identity);
             AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),0.8f);
+            shake += 0.2f;
+            stunTime += 0.1f;
         }
         else {
             Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
@@ -83,12 +87,13 @@ public class PlayerScript : MonoBehaviour
         if (kill) {
             comboCount++;
             comboTime = 6;
-            camShake = 0.4f;
+            shake += 0.4f;
         } else {
             comboTime += 1;
-            camShake = 0.2f;
+            shake += 0.2f;
         }
-        StartCoroutine(Hitstun(0.1f));
+        camShake = shake;
+        StartCoroutine(Hitstun(stunTime));
     }
 
     IEnumerator Hitstun(float seconds) {
