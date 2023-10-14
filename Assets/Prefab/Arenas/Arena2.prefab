@@ -1470,8 +1470,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1816139011578542631, guid: cd274873411d47046bcc56069deb3762, type: 3}
       propertyPath: arenas.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1816139011578542631, guid: cd274873411d47046bcc56069deb3762, type: 3}
+      propertyPath: arenas.Array.data[1]
+      value: 
+      objectReference: {fileID: 2509605033900581774, guid: 56980b6c09e07f644be1cf82306e3c35, type: 3}
     - target: {fileID: 2951832792613482699, guid: cd274873411d47046bcc56069deb3762, type: 3}
       propertyPath: m_Name
       value: NextArenaDoor

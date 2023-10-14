@@ -174,3 +174,4 @@ MonoBehaviour:
   arenas:
   - {fileID: 1644962895757594588, guid: 10de2d7822e77ae4a9b4d770646a8c21, type: 3}
   - {fileID: 8232057125077175525, guid: bc65d0d903c36254e97fbe514b681cd0, type: 3}
+  - {fileID: 2509605033900581774, guid: 56980b6c09e07f644be1cf82306e3c35, type: 3}

@@ -66,9 +66,19 @@ public class PlayerScript : MonoBehaviour
         if (kill) {
             comboCount++;
             comboTime = 6;
+            camShake = 0.4f;
         } else {
             comboTime += 1;
+            camShake = 0.2f;
         }
+        AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),0.8f);
+        StartCoroutine(Hitstun(0.1f));
+    }
+
+    IEnumerator Hitstun(float seconds) {
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(seconds);
+        Time.timeScale = 1;
     }
 
     private void Update()
@@ -76,7 +86,8 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
         if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
 
-        offset.m_Offset = new Vector3(Random.Range(-camShake,camShake),Random.Range(-camShake,camShake),0);
+        if (Time.timeScale != 0)
+            offset.m_Offset = new Vector3(Random.Range(-camShake,camShake),Random.Range(-camShake,camShake),0);
 
         sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
         sprite.color = new Color(1,1,1,(coolDown>0?0.4f:1));
@@ -117,7 +128,7 @@ public class PlayerScript : MonoBehaviour
     void Attack() {
         if (attackCooldown > 0) return;
         hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
-        movespeed += 8;
+        movespeed = 20;
         attackTimer = 0.1f;
         attackCooldown = 0.3f;
         weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
@@ -142,6 +153,7 @@ public class PlayerScript : MonoBehaviour
                     groundState = 0;
                     jumped = true;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
+                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.5f);
                 }
                 if (inputBuffer[1])
                     Attack();
@@ -160,7 +172,7 @@ public class PlayerScript : MonoBehaviour
                     if (movespeed < 12)
                         movespeed += speed;
                     if (movespeed > 15)
-                        movespeed -= 0.25f;
+                        movespeed -= 1f;
                 }
                 spd.x = movespeed * dir;
                 break;
@@ -177,7 +189,7 @@ public class PlayerScript : MonoBehaviour
                         movespeed += speed;
                 }
                     if (movespeed > 15)
-                        movespeed -= 0.25f;
+                        movespeed -= 1f;
                 if (jumped && !Input.GetButton("Jump") && spd.y > 0)
                 {
                     spd.y -= gravity;

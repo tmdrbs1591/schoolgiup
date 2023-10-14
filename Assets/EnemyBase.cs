@@ -46,7 +46,6 @@ public class EnemyBase : MonoBehaviour
     void Hurt(Transform collisionTransform) {
         if (hurtCooldown > 0) return;
         hurtCooldown = 0.5f;
-        PlayerScript.instance.camShake = 0.4f;
         rigid.velocity = new Vector2(PlayerScript.instance.dir * 4, 5);
         spriteRenderer.transform.localScale /= 2;
         health--;

@@ -63,6 +63,8 @@ MonoBehaviour:
   groundState: 0
   dir: 1
   camShake: 0
+  comboCount: 0
+  comboTime: 0
 --- !u!50 &8198453654000344515
 Rigidbody2D:
   serializedVersion: 4
@@ -385,7 +387,7 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0

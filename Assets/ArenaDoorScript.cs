@@ -26,8 +26,9 @@ public class ArenaDoorScript : MonoBehaviour
         PlayerScript.instance.camShake = 0.4f;
         health--;
         if (health <= 0) {
-            Destroy(gameObject);
+            PlayerScript.instance.comboTime = 6;
             Instantiate(arenas[Random.Range(0,arenas.Length)],transform.parent.parent).transform.position = transform.position;
+            Destroy(gameObject);
         }
     }
 }
