@@ -15,9 +15,10 @@ public class PlayerScript : MonoBehaviour
     public int health = 3;
 
     [SerializeField]SpriteRenderer sprite;
+    [SerializeField]GameObject weaponHolder;
     [SerializeField]SpriteRenderer weaponSprite;
-    [SerializeField]BoxCollider2D hurtBox;
     [SerializeField]Animator weaponAnimation;
+    [SerializeField]BoxCollider2D hurtBox;
     BoxCollider2D boxCollider;
     Camera cam;
     [SerializeField]CinemachineCameraOffset offset;
@@ -56,28 +57,32 @@ public class PlayerScript : MonoBehaviour
 
     public float damageOutput;
 
+    int currentWeapon = 0;
+    WeaponStat currentWeaponStat;
+
     void Start()
     {
         instance = this;
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+        ChangeWeapon(0);
     }
 
     public void DamageCalculation() {
         crit = (int)Random.Range(Mathf.Min(comboCount,50),60) >= 55;
-        damageOutput = crit ? 5:1;
+        damageOutput = currentWeaponStat.damage * (crit ? 3:1);
     }
 
     bool crit = false;
 
     public void Hit(bool kill = false) {
-        AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),0.8f);
+        AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
         float stunTime = 0.1f;
         if (crit) {
             Instantiate(critEffect,weaponSprite.transform.position,Quaternion.identity);
-            AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),0.8f);
+            AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),1);
             shake += 0.2f;
             stunTime += 0.1f;
         }
@@ -93,7 +98,21 @@ public class PlayerScript : MonoBehaviour
             shake += 0.2f;
         }
         camShake = shake;
+        movespeed -= 5;
         StartCoroutine(Hitstun(stunTime));
+    }
+
+    void ChangeWeapon(int weapon) {
+        currentWeapon = weapon;
+        int i = 0;
+        foreach (Transform a in weaponHolder.transform) {
+            a.gameObject.SetActive(i == currentWeapon);
+            i++;
+        }
+        currentWeaponStat = weaponHolder.transform.GetChild(weapon).GetComponent<WeaponStat>();
+        weaponSprite = weaponHolder.transform.GetChild(weapon).GetComponent<SpriteRenderer>();
+        weaponAnimation = weaponHolder.transform.GetChild(weapon).GetComponent<Animator>();
+        attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
     }
 
     IEnumerator Hitstun(float seconds) {
@@ -116,9 +135,8 @@ public class PlayerScript : MonoBehaviour
 
         if (coolDown>0) coolDown -= Time.deltaTime;
         
-        weaponSprite.flipX = dir == -1;
-        weaponSprite.transform.localPosition = new Vector3(0.7f * dir, -0.2f, -1);
-        weaponSprite.transform.eulerAngles = Vector3.forward * -spd.y * dir;
+        weaponHolder.transform.localScale = new Vector3(dir,1,1);
+        weaponHolder.transform.eulerAngles = Vector3.forward * -spd.y * dir;
 
         if (attackTimer > 0) attackTimer -= Time.deltaTime;
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
@@ -150,11 +168,11 @@ public class PlayerScript : MonoBehaviour
         if (attackCooldown > 0) return;
         AudioScript.instance.PlaySound(transform.position,2,Random.Range(0.9f,1.1f),1);
         hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
-        movespeed = 20;
-        attackTimer = 0.1f;
-        attackCooldown = 0.3f;
+        movespeed += 20;
+        attackTimer = currentWeaponStat.duration;
+        attackCooldown = currentWeaponStat.cooldown;
         weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
-        attackOrder = (attackOrder + 1) % 3;
+        attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
         sprite.transform.localScale = new Vector3(1.3f,0.8f,1);
     }
 
@@ -175,7 +193,7 @@ public class PlayerScript : MonoBehaviour
                     groundState = 0;
                     jumped = true;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
-                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.7f);
+                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
                 if (inputBuffer[1])
                     Attack();
@@ -221,7 +239,7 @@ public class PlayerScript : MonoBehaviour
                     jumped = false;
                     spd.y = jumpSpeed;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
-                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),0.7f);
+                    AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
                 if (inputBuffer[1])
                     Attack();

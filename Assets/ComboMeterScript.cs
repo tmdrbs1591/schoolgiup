@@ -22,7 +22,7 @@ public class ComboMeterScript : MonoBehaviour
 
     void Update()
     {
-        rectT.anchoredPosition = Vector2.Lerp(rectT.anchoredPosition,new Vector2(rectT.anchoredPosition.x,PlayerScript.instance.comboCount > 0 ? -200:260),Time.deltaTime * 10);
+        rectT.anchoredPosition = Vector2.Lerp(rectT.anchoredPosition,new Vector2(rectT.anchoredPosition.x,PlayerScript.instance.comboCount > 0 ? -200:300),Time.deltaTime * 10);
         meter.value = PlayerScript.instance.comboTime;
         if (oldCombo != PlayerScript.instance.comboCount) {
             oldCombo = PlayerScript.instance.comboCount;
