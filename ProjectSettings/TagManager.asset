@@ -6,6 +6,7 @@ TagManager:
   tags:
   - HurtBox
   - WeaponHurtBox
+  - VCam
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - Entity
+  - Hitbox
   - 
   - 
   - 

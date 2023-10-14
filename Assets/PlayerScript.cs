@@ -12,7 +12,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
 
-    int health = 3;
+    public int health = 3;
 
     [SerializeField]SpriteRenderer sprite;
     [SerializeField]SpriteRenderer weaponSprite;
@@ -35,7 +35,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] State state = State.normal;
 
     public int groundState = 0;
-    int dir = 1;
+    public int dir = 1;
     float movespeed;
     bool jumped = false;
     float attackTimer;
@@ -87,6 +87,8 @@ public class PlayerScript : MonoBehaviour
 
     public void Hurt() {
         if (coolDown > 0) return;
+        PlayerScript.instance.camShake = 0.4f;
+        health--;
         coolDown = 3;
         state = State.hurt;
         spd.y = 25;
@@ -94,12 +96,13 @@ public class PlayerScript : MonoBehaviour
 
     void Attack() {
         if (attackCooldown > 0) return;
-        hurtBox.transform.localPosition = Vector3.right * dir * 1.75f;
-        movespeed += 5;
+        hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
+        movespeed += 8;
         attackTimer = 0.1f;
         attackCooldown = 0.3f;
         weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
         attackOrder = (attackOrder + 1) % 3;
+        sprite.transform.localScale = new Vector3(1.3f,0.8f,1);
     }
 
     // Update is called once per frame

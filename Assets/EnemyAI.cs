@@ -3,29 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : EnemyBase
 {
-    Rigidbody2D rigid;
-    SpriteRenderer spriteRenderer;
-    [SerializeField] float moveSpeed = 3.0f;
-    [SerializeField] float detectionRange = 1.0f;
-    [SerializeField] float hitRange = 1.0f;
     [SerializeField] int nextMove;
     public bool attacking;
-    float attackTime;
 
-    [SerializeField] BoxCollider2D hurtBox;
-
-    [SerializeField] GameObject hitParticle;
-
-    private Transform player;
-
-    void Awake()
+    void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-
         InvokeRepeating("Think", 3f, 1.5f); // ���� �ð����� Think �Լ� ȣ��
 
     }
@@ -33,16 +17,16 @@ public class EnemyAI : MonoBehaviour
     IEnumerator Attack() {
         if (attacking) yield break;
         attacking = true;
-        bool direction = player.position.x > transform.position.x;
+        bool direction = PlayerScript.instance.transform.position.x > transform.position.x;
         rigid.velocity = new Vector2((direction?-1:1) * 2, rigid.velocity.y);
         yield return new WaitForSeconds(0.8f);
         hurtBox.gameObject.SetActive(true);
         hurtBox.transform.localPosition = new Vector3((direction?0.5f:-0.5f),0,0);
         for (float i = 1; i > 0; i -= Time.deltaTime) {
             rigid.velocity = new Vector2((direction?1:-1) * i * 8, rigid.velocity.y);
+            if (i < 0.5f) hurtBox.gameObject.SetActive(false);
             yield return null;
         }
-        hurtBox.gameObject.SetActive(false);
         attacking = false;
         yield break;
     }
@@ -50,19 +34,18 @@ public class EnemyAI : MonoBehaviour
     void FixedUpdate()
     {
         if (attacking) return;
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector2.Distance(transform.position, PlayerScript.instance.transform.position);
         if (distanceToPlayer <= detectionRange)
         {
-            if (player.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(player.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
+            if (PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
                 rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 15);
             if (Mathf.Abs(rigid.velocity.y) > 0.2f)
                 return;
-            canBeHurt = true;
-            if (Mathf.Abs(player.position.x - transform.position.x) <= hitRange) {
+            if (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= hitRange) {
                 StartCoroutine(Attack());
                 return;
             }
-            if (player.position.x > transform.position.x) 
+            if (PlayerScript.instance.transform.position.x > transform.position.x) 
                 nextMove = 1;
             else
                 nextMove = -1;
@@ -89,28 +72,10 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.tag == "WeaponHurtBox")
-            Hurt(collision.transform);
-    }
-
-    bool canBeHurt = true;
-    int health = 2;
-
-    void Update() {
-        spriteRenderer.transform.localScale = Vector3.Lerp(spriteRenderer.transform.localScale,new Vector3(1.2479f,1.2479f,1),Time.deltaTime * 5);
-    }
-
     void Hurt(Transform collisionTransform) {
-        if (!canBeHurt) return;
-        PlayerScript.instance.camShake += 0.2f;
-        canBeHurt = false;
-        rigid.velocity = new Vector2((collisionTransform.position.x > transform.position.x?4:-4), 5);
-        spriteRenderer.transform.localScale /= 2;
-        health--;
-        Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 5);
-        if (health <= 0) Destroy(gameObject);
+        StopCoroutine(Attack());
+        attacking = false;
+        hurtBox.gameObject.SetActive(false);
     }
 
     void Think()
