@@ -52,6 +52,12 @@ public class EnemyBase : MonoBehaviour
         health--;
         healthBar.value = (float)health / (float)maxHealth;
         Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 5);
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0) {
+            PlayerScript.instance.Hit(false);
+            Destroy(gameObject);
+        }
+        else {
+            PlayerScript.instance.Hit(true);
+        }
     }
 }

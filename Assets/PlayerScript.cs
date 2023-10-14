@@ -22,6 +22,8 @@ public class PlayerScript : MonoBehaviour
     Camera cam;
     [SerializeField]CinemachineCameraOffset offset;
 
+    [SerializeField]GameObject hitEffect;
+
     Vector2 spd;
     float coolDown;
 
@@ -54,6 +56,10 @@ public class PlayerScript : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+    }
+
+    public void Hit(bool kill = false) {
+        Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
     }
 
     private void Update()

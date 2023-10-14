@@ -58,6 +58,7 @@ MonoBehaviour:
   hurtBox: {fileID: 3822376578287861017}
   weaponAnimation: {fileID: 5422257465212636468}
   offset: {fileID: 0}
+  hitEffect: {fileID: 209578161093549710, guid: da3ddba62bc0a204aa7a3c2069a9edd3, type: 3}
   state: 0
   groundState: 0
   dir: 1
