@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine.Utility;
 using Cinemachine;
+using Unity.Burst.CompilerServices;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -23,8 +24,7 @@ public class PlayerScript : MonoBehaviour
     Camera cam;
     [SerializeField]CinemachineCameraOffset offset;
 
-    [SerializeField]GameObject hitEffect;
-    [SerializeField]GameObject critEffect;
+    [SerializeField]GameObject textEffect;
 
     Vector2 spd;
     float coolDown;
@@ -45,6 +45,7 @@ public class PlayerScript : MonoBehaviour
     float attackTimer;
     float attackCooldown;
     int attackOrder;
+    float skillCooldown;
 
     Rigidbody2D rb;
 
@@ -57,6 +58,8 @@ public class PlayerScript : MonoBehaviour
 
     public float damageOutput;
 
+    public bool skilling = false;
+
     int currentWeapon = 0;
     WeaponStat currentWeaponStat;
 
@@ -66,28 +69,30 @@ public class PlayerScript : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
-        ChangeWeapon(0);
+        ChangeWeapon(1);
     }
 
     public void DamageCalculation() {
-        crit = (int)Random.Range(Mathf.Min(comboCount,50),60) >= 55;
-        damageOutput = currentWeaponStat.damage * (crit ? 3:1);
+        crit = (int)Mathf.Min(comboCount,50) >= Random.Range(0, 100);
+        damageOutput = currentWeaponStat.damage * (crit ? 3:1) * damageMultiplier;
     }
 
     bool crit = false;
+
+    public float damageMultiplier = 1;
 
     public void Hit(bool kill = false) {
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
         float stunTime = 0.1f;
         if (crit) {
-            Instantiate(critEffect,weaponSprite.transform.position,Quaternion.identity);
+            Instantiate(currentWeaponStat.critHitEffect,weaponSprite.transform.position,Quaternion.identity);
             AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),1);
             shake += 0.2f;
             stunTime += 0.1f;
         }
         else {
-            Instantiate(hitEffect,weaponSprite.transform.position,Quaternion.identity);
+            Instantiate(currentWeaponStat.normalHitEffect, weaponSprite.transform.position,Quaternion.identity);
         }
         if (kill) {
             comboCount++;
@@ -97,6 +102,8 @@ public class PlayerScript : MonoBehaviour
             comboTime += 1;
             shake += 0.2f;
         }
+        HitTextScript tex = Instantiate(textEffect, weaponSprite.transform.position, Quaternion.identity).GetComponent<HitTextScript>();
+        tex.Initialize(damageOutput, crit);
         camShake = shake;
         movespeed -= 5;
         StartCoroutine(Hitstun(stunTime));
@@ -121,13 +128,43 @@ public class PlayerScript : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    IEnumerator Skill()
+    {
+        switch (currentWeapon)
+        {
+            case 0:
+                skilling = true;
+                damageMultiplier = 5;
+                Time.timeScale = 0.1f;
+                for (int i = 0; i < 5; i++)
+                {
+                    Attack(true, false);
+                    yield return new WaitForSecondsRealtime(0.1f);
+                }
+                Time.timeScale = 1f;
+                damageMultiplier = 1;
+                skilling = false;
+                break;
+        }
+        yield return null;
+    }
+
     private void Update()
     {
         if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
         if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
 
+        if (Input.GetButtonDown("1")) ChangeWeapon(0);
+        if (Input.GetButtonDown("2")) ChangeWeapon(1);
+        if (Input.GetButtonDown("Skill") && skillCooldown <= 0)
+        {
+            skillCooldown = currentWeaponStat.skillCooldown;
+            StartCoroutine(Skill());
+        }
+
         if (Time.timeScale != 0)
             offset.m_Offset = new Vector3(Random.Range(-camShake,camShake),Random.Range(-camShake,camShake),0);
+
 
         sprite.transform.localScale = Vector3.Lerp(sprite.transform.localScale,Vector3.one,Time.deltaTime * 5);
         sprite.color = new Color(1,1,1,(coolDown>0?0.4f:1));
@@ -140,6 +177,7 @@ public class PlayerScript : MonoBehaviour
 
         if (attackTimer > 0) attackTimer -= Time.deltaTime;
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
+        if (skillCooldown > 0) skillCooldown -= Time.deltaTime;
 
         hurtBox.gameObject.SetActive(attackTimer > 0);
 
@@ -157,18 +195,19 @@ public class PlayerScript : MonoBehaviour
 
     public void Hurt() {
         if (coolDown > 0) return;
-        PlayerScript.instance.camShake = 0.4f;
+        camShake = 0.5f;
         health--;
         coolDown = 3;
         state = State.hurt;
         spd.y = 25;
+
     }
 
-    void Attack() {
-        if (attackCooldown > 0) return;
-        AudioScript.instance.PlaySound(transform.position,2,Random.Range(0.9f,1.1f),1);
+    void Attack(bool force = false, bool dash = true) {
+        if (attackCooldown > 0 && !force) return;
+        AudioScript.instance.PlaySound(transform.position,currentWeaponStat.soundIndex,Random.Range(0.9f,1.1f),1);
         hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
-        movespeed += 20;
+        if (dash) movespeed += 20;
         attackTimer = currentWeaponStat.duration;
         attackCooldown = currentWeaponStat.cooldown;
         weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));

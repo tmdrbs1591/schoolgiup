@@ -25,6 +25,7 @@ public class EnemyBase : MonoBehaviour
         health = maxHealth;
         healthBar.maxValue = maxHealth;
         healthBar.value = (float)maxHealth;
+        hurtCooldown = 0.5f;
     }
 
     private void OnTriggerStay2D(Collider2D collision)

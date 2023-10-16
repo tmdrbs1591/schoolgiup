@@ -9,4 +9,7 @@ public class WeaponStat : MonoBehaviour
     public float duration;
     public int maxAnimation;
     public int soundIndex;
+    public float skillCooldown;
+    public GameObject normalHitEffect;
+    public GameObject critHitEffect;
 }

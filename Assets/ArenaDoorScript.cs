@@ -29,6 +29,7 @@ public class ArenaDoorScript : MonoBehaviour
             PlayerScript.instance.comboTime = 6;
             Instantiate(arenas[Random.Range(0,arenas.Length)],transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
             Destroy(gameObject);
+            GameManager.instance.doorsBroken++;
         }
     }
 }

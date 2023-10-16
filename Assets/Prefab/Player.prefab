@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3319246146582036138}
   - component: {fileID: 3749279785967037606}
   - component: {fileID: 6810497060772543334}
+  - component: {fileID: 4698966394869049615}
   m_Layer: 0
   m_Name: Stick
   m_TagString: Untagged
@@ -124,6 +125,21 @@ MonoBehaviour:
   duration: 0.12
   maxAnimation: 3
   soundIndex: 2
+  skillCooldown: 5
+  normalHitEffect: {fileID: 209578161093549710, guid: da3ddba62bc0a204aa7a3c2069a9edd3, type: 3}
+  critHitEffect: {fileID: 209578161093549710, guid: 129e46bbb7c871f4cbf76febe728823b, type: 3}
+--- !u!114 &4698966394869049615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2454779227773977531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 510d9c9d3e1890741a5f44aa9fa2f0ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3777762876903061612
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,8 +199,7 @@ MonoBehaviour:
   weaponAnimation: {fileID: 0}
   hurtBox: {fileID: 3822376578287861017}
   offset: {fileID: 0}
-  hitEffect: {fileID: 209578161093549710, guid: da3ddba62bc0a204aa7a3c2069a9edd3, type: 3}
-  critEffect: {fileID: 209578161093549710, guid: 129e46bbb7c871f4cbf76febe728823b, type: 3}
+  textEffect: {fileID: 1754915798318460333, guid: 846e2745035255e4a882a4610ea19f7b, type: 3}
   state: 0
   groundState: 0
   dir: 1
@@ -291,7 +306,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6254031776779221063}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.34, y: -0.3, z: 0}
+  m_LocalPosition: {x: 0.34, y: -0.45, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -383,11 +398,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 318d55c1aa321904894361c056d8681d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
+  damage: 80
   cooldown: 0.3
   duration: 0.2
   maxAnimation: 2
-  soundIndex: 2
+  soundIndex: 4
+  skillCooldown: 0
+  normalHitEffect: {fileID: 209578161093549710, guid: 307f6f594dd02f145a1481cf52d75fcb, type: 3}
+  critHitEffect: {fileID: 209578161093549710, guid: e8d2b9a3e0d2f1b48918e692e1617663, type: 3}
 --- !u!1 &7334004714700668290
 GameObject:
   m_ObjectHideFlags: 0
