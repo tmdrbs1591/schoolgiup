@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemySpawnerScript : MonoBehaviour
 {
     int enemiesToSpawn;
-    GameObject spawnedEnemy;
+    EnemyBase spawnedEnemy;
     public GameObject[] enemyToSpawn;
 
     private void Start()
@@ -15,14 +15,14 @@ public class EnemySpawnerScript : MonoBehaviour
 
     void Update()
     {
-        if (enemiesToSpawn > 0 && spawnedEnemy == null)
+        if (enemiesToSpawn > 0 && (spawnedEnemy == null || spawnedEnemy.dead))
             Spawn();
     }
 
     void Spawn()
     {
         int rand = Random.Range(0, enemyToSpawn.Length);
-        spawnedEnemy = Instantiate(enemyToSpawn[rand], transform.position, Quaternion.identity);
+        spawnedEnemy = Instantiate(enemyToSpawn[rand], transform.position, Quaternion.identity).GetComponent<EnemyBase>();
         enemiesToSpawn--;
         if (enemiesToSpawn <= 0) Destroy(gameObject);
     }

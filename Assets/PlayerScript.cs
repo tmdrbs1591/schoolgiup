@@ -9,6 +9,9 @@ public class PlayerScript : MonoBehaviour
 {
     public static PlayerScript instance;
 
+    
+    
+
     [SerializeField] float gravity;
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
@@ -25,6 +28,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]CinemachineCameraOffset offset;
 
     [SerializeField]GameObject textEffect;
+    [SerializeField] TrailRenderer trail;
 
     Vector2 spd;
     float coolDown;
@@ -61,7 +65,7 @@ public class PlayerScript : MonoBehaviour
     public bool skilling = false;
 
     int currentWeapon = 0;
-    WeaponStat currentWeaponStat;
+    public WeaponStat currentWeaponStat;
 
     void Start()
     {
@@ -70,6 +74,8 @@ public class PlayerScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
         ChangeWeapon(1);
+
+        
     }
 
     public void DamageCalculation() {
@@ -81,18 +87,25 @@ public class PlayerScript : MonoBehaviour
 
     public float damageMultiplier = 1;
 
-    public void Hit(bool kill = false) {
+    public void Hit(Vector3 spawnPosition, float damage, bool kill = false, bool hitstun = true) {
+        if (spawnPosition == Vector3.zero) spawnPosition = weaponSprite.transform.position;
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
         float stunTime = 0.1f;
-        if (crit) {
-            Instantiate(currentWeaponStat.critHitEffect,weaponSprite.transform.position,Quaternion.identity);
-            AudioScript.instance.PlaySound(transform.position,3,Random.Range(0.8f,1.0f),1);
-            shake += 0.2f;
-            stunTime += 0.1f;
-        }
-        else {
-            Instantiate(currentWeaponStat.normalHitEffect, weaponSprite.transform.position,Quaternion.identity);
+        if (spawnPosition == weaponSprite.transform.position)
+        {
+            if (crit)
+            {
+                Instantiate(currentWeaponStat.critHitEffect, weaponSprite.transform.position, Quaternion.identity);
+                AudioScript.instance.PlaySound(transform.position, 3, Random.Range(0.8f, 1.0f), 1);
+                shake += 0.2f;
+                stunTime += 0.1f;
+            }
+            else
+            {
+                Instantiate(currentWeaponStat.normalHitEffect, weaponSprite.transform.position, Quaternion.identity);
+            }
+            movespeed -= 5;
         }
         if (kill) {
             comboCount++;
@@ -102,11 +115,11 @@ public class PlayerScript : MonoBehaviour
             comboTime += 1;
             shake += 0.2f;
         }
-        HitTextScript tex = Instantiate(textEffect, weaponSprite.transform.position, Quaternion.identity).GetComponent<HitTextScript>();
-        tex.Initialize(damageOutput, crit);
+        HitTextScript tex = Instantiate(textEffect, spawnPosition, Quaternion.identity).GetComponent<HitTextScript>();
+        tex.Initialize(damage, crit);
         camShake = shake;
-        movespeed -= 5;
-        StartCoroutine(Hitstun(stunTime));
+        if (hitstun)
+            StartCoroutine(Hitstun(stunTime));
     }
 
     void ChangeWeapon(int weapon) {
@@ -156,6 +169,7 @@ public class PlayerScript : MonoBehaviour
 
         if (Input.GetButtonDown("1")) ChangeWeapon(0);
         if (Input.GetButtonDown("2")) ChangeWeapon(1);
+        if (Input.GetButtonDown("3")) ChangeWeapon(2);
         if (Input.GetButtonDown("Skill") && skillCooldown <= 0)
         {
             skillCooldown = currentWeaponStat.skillCooldown;
@@ -205,6 +219,7 @@ public class PlayerScript : MonoBehaviour
 
     void Attack(bool force = false, bool dash = true) {
         if (attackCooldown > 0 && !force) return;
+        trail.emitting = true;
         AudioScript.instance.PlaySound(transform.position,currentWeaponStat.soundIndex,Random.Range(0.9f,1.1f),1);
         hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
         if (dash) movespeed += 20;
@@ -291,6 +306,8 @@ public class PlayerScript : MonoBehaviour
                 break;
         }
         rb.velocity = spd;
+        if (spd.magnitude < 15)
+            trail.emitting = false;
 
         for (int i = 0; i < inputBuffer.Length; i++) inputBuffer[i] = false;
     }

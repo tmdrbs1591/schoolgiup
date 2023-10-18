@@ -632,7 +632,7 @@ Transform:
   - {fileID: 1559911571668637213}
   - {fileID: 6782680695186058803}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2030109632585491910
 Rigidbody2D:
@@ -680,10 +680,16 @@ MonoBehaviour:
   hitRange: 2
   attackTime: 0
   healthBar: {fileID: 9193065580357575136}
+  scoreAward: 100
+  dieSoundIndex: 5
+  bloodSoundIndex: 7
+  coin: {fileID: 7708461866313855356, guid: 8df1ab84d78e33944ad2a1db21b42e51, type: 3}
   hurtBox: {fileID: 9201914608201652129}
   hitParticle: {fileID: 8224198577300562912, guid: fcf56511e1111b3439b407357cb265f8, type: 3}
-  maxHealth: 2
-  health: 2
+  bloodParticle: {fileID: 0}
+  maxHealth: 50
+  health: 50
+  burnDamage: 0
   hurtCooldown: 0
   nextMove: 3
   attacking: 0

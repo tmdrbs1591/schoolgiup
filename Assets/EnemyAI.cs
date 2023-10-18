@@ -7,6 +7,7 @@ public class EnemyAI : EnemyBase
 {
     [SerializeField] int nextMove;
     public bool attacking;
+    IEnumerator attack;
 
     void Start()
     {
@@ -15,7 +16,7 @@ public class EnemyAI : EnemyBase
     }
 
     IEnumerator Attack() {
-        if (attacking) yield break;
+        if (attacking || dead) yield break;
         attacking = true;
         bool direction = PlayerScript.instance.transform.position.x > transform.position.x;
         rigid.velocity = new Vector2((direction?-1:1) * 2, rigid.velocity.y);
@@ -33,7 +34,7 @@ public class EnemyAI : EnemyBase
 
     void FixedUpdate()
     {
-        if (attacking) return;
+        if (attacking || dead) return;
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerScript.instance.transform.position);
         if (distanceToPlayer <= detectionRange)
         {
@@ -42,7 +43,8 @@ public class EnemyAI : EnemyBase
             if (Mathf.Abs(rigid.velocity.y) > 0.2f)
                 return;
             if (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= hitRange) {
-                StartCoroutine(Attack());
+                attack = Attack();
+                StartCoroutine(attack);
                 return;
             }
             if (PlayerScript.instance.transform.position.x > transform.position.x) 
@@ -73,13 +75,15 @@ public class EnemyAI : EnemyBase
     }
 
     void Hurt(Transform collisionTransform) {
-        StopCoroutine(Attack());
+        if (dead) return;
+        StopCoroutine(attack);
         attacking = false;
         hurtBox.gameObject.SetActive(false);
     }
 
-    void Think()
+    public void Think()
     {
+        if (dead) return;
         nextMove = Random.Range(-1, 2);
 
         Invoke("Think", 1.5f);

@@ -22,7 +22,7 @@ public class ComboMeterScript : MonoBehaviour
 
     void Update()
     {
-        rectT.anchoredPosition = Vector2.Lerp(rectT.anchoredPosition,new Vector2(rectT.anchoredPosition.x,PlayerScript.instance.comboCount > 0 ? -200:300),Time.deltaTime * 10);
+        rectT.anchoredPosition = Vector2.Lerp(rectT.anchoredPosition,new Vector2(rectT.anchoredPosition.x,PlayerScript.instance.comboCount > 0 ? -84 : 60),Time.deltaTime * 10);
         meter.value = PlayerScript.instance.comboTime;
         if (oldCombo != PlayerScript.instance.comboCount) {
             oldCombo = PlayerScript.instance.comboCount;
@@ -30,7 +30,7 @@ public class ComboMeterScript : MonoBehaviour
             counterShake = 0.5f;
             counter.fontSize += 20;
         }
-        rectText.anchoredPosition = new Vector2(Random.Range(-counterShake * 10,counterShake * 10),-46 + Random.Range(-counterShake * 10,counterShake * 10));
+        rectText.anchoredPosition = new Vector2(-158 + Random.Range(-counterShake * 10,counterShake * 10),Random.Range(-counterShake * 10,counterShake * 10));
         counter.fontSize = Mathf.Lerp(counter.fontSize,90,Time.deltaTime * 10);
         if (counterShake >0) counterShake -= Time.deltaTime;
     }
