@@ -19,6 +19,7 @@ public class EnemyAI : EnemyBase
         if (attacking || dead) yield break;
         attacking = true;
         bool direction = PlayerScript.instance.transform.position.x > transform.position.x;
+        spriteRenderer.flipX = !direction;
         rigid.velocity = new Vector2((direction?-1:1) * 2, rigid.velocity.y);
         yield return new WaitForSeconds(0.8f);
         hurtBox.gameObject.SetActive(true);
@@ -39,7 +40,7 @@ public class EnemyAI : EnemyBase
         if (distanceToPlayer <= detectionRange)
         {
             if (PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
-                rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 15);
+                rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 20);
             if (Mathf.Abs(rigid.velocity.y) > 0.2f)
                 return;
             if (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= hitRange) {
@@ -64,17 +65,11 @@ public class EnemyAI : EnemyBase
             Invoke("Think", 3f);
         }
 
-        if (nextMove == -1)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else if (nextMove == 1)
-        {
-            spriteRenderer.flipX = false;
-        }
+
+        spriteRenderer.flipX = nextMove == -1;
     }
 
-    void Hurt(Transform collisionTransform) {
+    void HurtLate() {
         if (dead) return;
         StopCoroutine(attack);
         attacking = false;

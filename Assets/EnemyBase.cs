@@ -35,11 +35,18 @@ public class EnemyBase : MonoBehaviour
         hurtCooldown = 0.5f;
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (dead) return;
         if (collision.tag == "WeaponHurtBox")
-            Hurt(collision.transform);
+            if (collision.GetComponent<CustomTags>() && collision.GetComponent<CustomTags>().tags.Contains("Projectile"))
+                Hurt(transform);
+            else
+                Hurt(collision.transform);
+        if (collision.GetComponent<CustomTags>() && collision.GetComponent<CustomTags>().tags.Contains("Projectile") && !collision.GetComponent<CustomTags>().tags.Contains("Penetrate"))
+        {
+            Destroy(collision.gameObject);
+        }
     }
 
     public int maxHealth = 2;
@@ -70,20 +77,33 @@ public class EnemyBase : MonoBehaviour
 
     public float hurtCooldown = 0;
 
-    void Hurt(Transform collisionTransform, bool forceDamage = false, float damage = 0) {
-        Vector3 spawnPos = Vector3.zero;
-        bool hitstun = true;
+    public void Die()
+    {
+
+        healthBar.gameObject.SetActive(false);
+        GameManager.instance.AddScore(scoreAward, true);
+        AudioScript.instance.PlaySound(transform.position, dieSoundIndex, Random.Range(0.8f, 1.0f));
+        dead = true;
+        rigid.velocity = rigid.velocity = new Vector2(PlayerScript.instance.dir * 5, 7);
+        rigid.constraints = RigidbodyConstraints2D.None;
+        rigid.angularVelocity = Random.Range(-100, 100);
+        GetComponent<Collider2D>().enabled = false;
+        Instantiate(coin, transform.position, Quaternion.identity);
+        Invoke("DieLate",0);
+    }
+
+    public void Hurt(Transform collisionTransform, bool forceDamage = false, float damage = 0, bool _hitstun = true) {
+        Vector3 spawnPos = collisionTransform.position;
+        bool hitstun = _hitstun;
         if (hurtCooldown > 0 && !forceDamage) return;
         spriteRenderer.transform.localScale /= 2;
         if (collisionTransform == transform)
         {
-            spawnPos = transform.position;
             hitstun = false;
         }
         if (damage == 0)
         {
             rigid.velocity = new Vector2(PlayerScript.instance.dir * 4, 5);
-            hurtCooldown = 0.5f;
             PlayerScript.instance.DamageCalculation();
             health -= PlayerScript.instance.damageOutput;
             if (PlayerScript.instance.currentWeaponStat.burn)
@@ -97,25 +117,19 @@ public class EnemyBase : MonoBehaviour
             health -= damage;
         }
         healthBar.value = (float)health;
-        Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 5);
+        Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 1);
         if (burnDamage > 0) {
-            Destroy(Instantiate(bloodParticle, transform.position, Quaternion.identity), 5);
+            Destroy(Instantiate(bloodParticle, transform.position, Quaternion.identity), 3);
             AudioScript.instance.PlaySound(transform.position, bloodSoundIndex, Random.Range(0.8f, 1.0f));
         }
-        if (health <= 0) {
-            PlayerScript.instance.Hit(spawnPos,damage,true,hitstun);
-            healthBar.gameObject.SetActive(false);
-            GameManager.instance.AddScore(scoreAward, true);
-            AudioScript.instance.PlaySound(transform.position,dieSoundIndex, Random.Range(0.8f, 1.0f));
-            dead = true;
-            rigid.velocity = rigid.velocity = new Vector2(PlayerScript.instance.dir * 5, 7);
-            rigid.constraints = RigidbodyConstraints2D.None;
-            rigid.angularVelocity = Random.Range(-100, 100);
-            GetComponent<Collider2D>().enabled = false;
-            Instantiate(coin,transform.position,Quaternion.identity);
+        if (health <= 0)
+        {
+            PlayerScript.instance.Hit(spawnPos, damage, true, hitstun, burnDamage <= 0);
+            Die();
         }
         else {
-            PlayerScript.instance.Hit(spawnPos, damage, false, hitstun);
+            PlayerScript.instance.Hit(spawnPos, damage, false, hitstun, burnDamage <= 0);
         }
+        Invoke("HurtLate", 0);
     }
 }

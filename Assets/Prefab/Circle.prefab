@@ -611,7 +611,7 @@ GameObject:
   - component: {fileID: 2789417604989090615}
   m_Layer: 7
   m_Name: Circle
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -649,7 +649,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 2
+  m_GravityScale: 3
   m_Material: {fileID: 6200000, guid: ac4c0304ab57a5a419b6b272e13827a5, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -678,7 +678,7 @@ MonoBehaviour:
   moveSpeed: 4
   detectionRange: 10
   hitRange: 2
-  attackTime: 0
+  attackTime: 0.5
   healthBar: {fileID: 9193065580357575136}
   scoreAward: 100
   dieSoundIndex: 5
@@ -687,8 +687,9 @@ MonoBehaviour:
   hurtBox: {fileID: 9201914608201652129}
   hitParticle: {fileID: 8224198577300562912, guid: fcf56511e1111b3439b407357cb265f8, type: 3}
   bloodParticle: {fileID: 0}
-  maxHealth: 50
-  health: 50
+  dead: 0
+  maxHealth: 3
+  health: 3
   burnDamage: 0
   hurtCooldown: 0
   nextMove: 3

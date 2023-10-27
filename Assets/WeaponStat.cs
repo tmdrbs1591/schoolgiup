@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeaponStat : MonoBehaviour
 {
+    public string name;
     public float damage;
     public float cooldown;
     public float duration;
@@ -14,4 +15,6 @@ public class WeaponStat : MonoBehaviour
     public GameObject critHitEffect;
     public GameObject bleedEffect;
     public bool burn;
+    public float attackDelay = 0;
+    public GameObject projectile;
 }

@@ -7,6 +7,7 @@ TagManager:
   - HurtBox
   - WeaponHurtBox
   - VCam
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Ground
   - Entity
   - Hitbox
-  - 
+  - Ball
   - 
   - 
   - 

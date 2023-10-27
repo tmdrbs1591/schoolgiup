@@ -13,6 +13,6 @@ public class CritChanceText : MonoBehaviour
     }
     void Update()
     {
-        text.text = $"현재 치명타 확률: {Mathf.Min((float)PlayerScript.instance.comboCount,50f) / 2f}%";
+        text.text = $"{Mathf.Min((float)PlayerScript.instance.comboCount,50f) / 2f}%";
     }
 }

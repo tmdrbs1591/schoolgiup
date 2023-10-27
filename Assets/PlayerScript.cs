@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine.Utility;
 using Cinemachine;
 using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -87,26 +88,28 @@ public class PlayerScript : MonoBehaviour
 
     public float damageMultiplier = 1;
 
-    public void Hit(Vector3 spawnPosition, float damage, bool kill = false, bool hitstun = true) {
+    public void Hit(Vector3 spawnPosition, float damage, bool kill = false, bool hitstun = true, bool particle = true) {
         if (spawnPosition == Vector3.zero) spawnPosition = weaponSprite.transform.position;
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
         float stunTime = 0.1f;
         if (spawnPosition == weaponSprite.transform.position)
         {
-            if (crit)
+            movespeed -= 5;
+        }
+        if (crit)
             {
-                Instantiate(currentWeaponStat.critHitEffect, weaponSprite.transform.position, Quaternion.identity);
+                if (particle)
+                    Destroy(Instantiate(currentWeaponStat.critHitEffect, spawnPosition, Quaternion.identity),2);
                 AudioScript.instance.PlaySound(transform.position, 3, Random.Range(0.8f, 1.0f), 1);
                 shake += 0.2f;
                 stunTime += 0.1f;
             }
             else
-            {
-                Instantiate(currentWeaponStat.normalHitEffect, weaponSprite.transform.position, Quaternion.identity);
+        {
+            if (particle)
+                Destroy(Instantiate(currentWeaponStat.normalHitEffect, spawnPosition, Quaternion.identity), 2);
             }
-            movespeed -= 5;
-        }
         if (kill) {
             comboCount++;
             comboTime = 6;
@@ -122,7 +125,7 @@ public class PlayerScript : MonoBehaviour
             StartCoroutine(Hitstun(stunTime));
     }
 
-    void ChangeWeapon(int weapon) {
+    public void ChangeWeapon(int weapon) {
         currentWeapon = weapon;
         int i = 0;
         foreach (Transform a in weaponHolder.transform) {
@@ -164,16 +167,19 @@ public class PlayerScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
-        if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
-
-        if (Input.GetButtonDown("1")) ChangeWeapon(0);
-        if (Input.GetButtonDown("2")) ChangeWeapon(1);
-        if (Input.GetButtonDown("3")) ChangeWeapon(2);
-        if (Input.GetButtonDown("Skill") && skillCooldown <= 0)
+        if (!GameManager.instance.shopping)
         {
-            skillCooldown = currentWeaponStat.skillCooldown;
-            StartCoroutine(Skill());
+            if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
+            if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
+
+            if (Input.GetButtonDown("1")) ChangeWeapon(0);
+            if (Input.GetButtonDown("2")) ChangeWeapon(1);
+            if (Input.GetButtonDown("3")) ChangeWeapon(2);
+            if (Input.GetButtonDown("Skill") && skillCooldown <= 0)
+            {
+                skillCooldown = currentWeaponStat.skillCooldown;
+                StartCoroutine(Skill());
+            }
         }
 
         if (Time.timeScale != 0)
@@ -217,23 +223,48 @@ public class PlayerScript : MonoBehaviour
 
     }
 
-    void Attack(bool force = false, bool dash = true) {
-        if (attackCooldown > 0 && !force) return;
-        trail.emitting = true;
-        AudioScript.instance.PlaySound(transform.position,currentWeaponStat.soundIndex,Random.Range(0.9f,1.1f),1);
-        hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
-        if (dash) movespeed += 20;
-        attackTimer = currentWeaponStat.duration;
+    IEnumerator Attack(bool force = false, bool dash = true) {
+        if (attackCooldown > 0 && !force) yield break;
         attackCooldown = currentWeaponStat.cooldown;
-        weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
-        attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
-        sprite.transform.localScale = new Vector3(1.3f,0.8f,1);
+        if (currentWeaponStat.projectile == null)
+        {
+            trail.emitting = true;
+            AudioScript.instance.PlaySound(transform.position, currentWeaponStat.soundIndex, Random.Range(0.9f, 1.1f), 1);
+            if (dash) movespeed += 20;
+            weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
+            attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
+            sprite.transform.localScale = new Vector3(1.3f, 0.8f, 1);
+            yield return new WaitForSeconds(currentWeaponStat.attackDelay);
+            hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
+            attackTimer = currentWeaponStat.duration;
+        } else
+        {
+            hurtBox.transform.localPosition = Vector3.up * 99999999;
+            switch (currentWeaponStat.name)
+            {
+                default:
+                    AudioScript.instance.PlaySound(transform.position, currentWeaponStat.soundIndex, Random.Range(0.9f, 1.1f), 1);
+                    Instantiate(currentWeaponStat.projectile, transform.position, Quaternion.identity);
+                    break;
+                case "Ninja Star":
+                    for (int i = 0; i < 3; i++)
+                    {
+                        AudioScript.instance.PlaySound(transform.position, currentWeaponStat.soundIndex, Random.Range(0.9f, 1.1f), 1);
+                        Instantiate(currentWeaponStat.projectile, transform.position, Quaternion.identity);
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    break;
+            }
+        }
+        yield return null;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         int moveInput = (int)Input.GetAxisRaw("Horizontal");
+        if (GameManager.instance.shopping)
+            moveInput = 0;
         switch (state)
         {
             case State.normal:
@@ -250,7 +281,7 @@ public class PlayerScript : MonoBehaviour
                     AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
                 if (inputBuffer[1])
-                    Attack();
+                    StartCoroutine(Attack());
                 if (moveInput == 0)
                 {
                     if (movespeed < 0)
@@ -284,10 +315,10 @@ public class PlayerScript : MonoBehaviour
                 }
                     if (movespeed > 15)
                         movespeed -= 1f;
-                if (jumped && !Input.GetButton("Jump") && spd.y > 0)
-                {
-                    spd.y -= gravity;
-                }
+                //if (jumped && !Input.GetButton("Jump") && spd.y > 0)
+                //{
+                //    spd.y -= gravity;
+                //}
                 if (inputBuffer[0] && jumped)
                 {
                     jumped = false;
@@ -296,7 +327,7 @@ public class PlayerScript : MonoBehaviour
                     AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
                 if (inputBuffer[1])
-                    Attack();
+                    StartCoroutine(Attack()); 
                 spd.x = movespeed * dir;
                 spd.y -= gravity;
                 break;
@@ -310,6 +341,7 @@ public class PlayerScript : MonoBehaviour
             trail.emitting = false;
 
         for (int i = 0; i < inputBuffer.Length; i++) inputBuffer[i] = false;
+
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -328,6 +360,7 @@ public class PlayerScript : MonoBehaviour
     {
         groundState = 0;
     }
+    
 }
 
 

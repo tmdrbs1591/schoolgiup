@@ -7,7 +7,7 @@ using Cinemachine;
 public class CameraAreaScript : MonoBehaviour
 {
     [SerializeField]CinemachineConfiner2D confiner;
-
+  
     void Awake() {
         confiner = GameObject.FindWithTag("VCam").GetComponent<CinemachineConfiner2D>();
     }
@@ -16,5 +16,6 @@ public class CameraAreaScript : MonoBehaviour
     {
         if (collision.tag == "Player")
             confiner.m_BoundingShape2D = gameObject.GetComponent<PolygonCollider2D>();
+
     }
 }
