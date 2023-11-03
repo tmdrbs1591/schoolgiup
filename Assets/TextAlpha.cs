@@ -7,8 +7,10 @@ using TMPro;
 public class TextAlpha : MonoBehaviour
 {
 
-    public TextMeshProUGUI text;
+    public TMP_Text text;
+    [SerializeField]
     float time = 0f;
+    [SerializeField]
     float F_time = 1f;
     // Start is called before the first frame update
     void Start()
@@ -23,25 +25,16 @@ public class TextAlpha : MonoBehaviour
     }
     IEnumerator FadeFlow()
     {
+        yield return new WaitForSeconds(time);
         Color Alpha = text.color;
-        while (Alpha.a < 1f)
+        for (float i = 0; i < F_time; i += Time.deltaTime)
         {
-            time += Time.deltaTime / F_time;
-            Alpha.a = Mathf.Lerp(0.1f,1f,time);
-            text.color = Alpha;
-            yield return null;
-            }
-        time = 0f;
-        yield return new WaitForSeconds(1f);
-
-        while (Alpha.a < 0f)
-        {
-            time += Time.deltaTime / F_time;
-            Alpha.a = Mathf.Lerp(0.1f,1f, time);
+            Alpha.a = Mathf.Lerp(1,0,i);
             text.color = Alpha;
             yield return null;
         }
-
+        Destroy(gameObject);
+        yield break;
     }
 
    

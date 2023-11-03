@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ public class EnemyBase : MonoBehaviour
     public int dieSoundIndex;
     public int bloodSoundIndex;
     public GameObject coin;
+    public bool allowHurt = true;
 
     public BoxCollider2D hurtBox;
 
@@ -40,7 +42,7 @@ public class EnemyBase : MonoBehaviour
         if (dead) return;
         if (collision.tag == "WeaponHurtBox")
             if (collision.GetComponent<CustomTags>() && collision.GetComponent<CustomTags>().tags.Contains("Projectile"))
-                Hurt(transform);
+                Hurt(transform, false, 0, false);
             else
                 Hurt(collision.transform);
         if (collision.GetComponent<CustomTags>() && collision.GetComponent<CustomTags>().tags.Contains("Projectile") && !collision.GetComponent<CustomTags>().tags.Contains("Penetrate"))
@@ -95,6 +97,8 @@ public class EnemyBase : MonoBehaviour
     public void Hurt(Transform collisionTransform, bool forceDamage = false, float damage = 0, bool _hitstun = true) {
         Vector3 spawnPos = collisionTransform.position;
         bool hitstun = _hitstun;
+        Invoke("HurtLate", 0);
+        if (!allowHurt) return;
         if (hurtCooldown > 0 && !forceDamage) return;
         spriteRenderer.transform.localScale /= 2;
         if (collisionTransform == transform)
@@ -130,6 +134,5 @@ public class EnemyBase : MonoBehaviour
         else {
             PlayerScript.instance.Hit(spawnPos, damage, false, hitstun, burnDamage <= 0);
         }
-        Invoke("HurtLate", 0);
     }
 }

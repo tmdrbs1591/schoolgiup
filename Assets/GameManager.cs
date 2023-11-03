@@ -6,16 +6,19 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public int doorsBroken;
+    public int doorsBrokenTotal;
     public int score;
     public int comboAdditionalScore;
     public int coin;
     public GameObject shopPenel;
     public bool shopping;
     public int boss;
+    public int randomArenaLeft;
     
     void Start()
     {
         instance = this;
+        randomArenaLeft = Random.Range(3, 14);
     }
 
     public void AddScore(int _score, bool comboAffected = false)

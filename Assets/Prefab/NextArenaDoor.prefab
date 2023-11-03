@@ -117,7 +117,7 @@ Transform:
   m_Children:
   - {fileID: 8192701420153227160}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1680310125641754648
 BoxCollider2D:
@@ -210,5 +210,7 @@ MonoBehaviour:
   - {fileID: 2509605033900581774, guid: 6ee239bc4aa888e4ba687cfb77c23dfd, type: 3}
   bossArenas:
   - {fileID: 2509605033900581774, guid: 4e232d9b3a846d1449719f6fb44e4157, type: 3}
+  randomArenas:
+  - {fileID: 2509605033900581774, guid: 15d0ffd971fd90e49a10c6fcf73cfb62, type: 3}
   shop: {fileID: 2509605033900581774, guid: dad0650b66dd2cb449f50cd41de45316, type: 3}
   dorrbreakpaticle: {fileID: 8224198577300562912, guid: 3e6ac395c0b4bfd47b415ae19510d3c0, type: 3}

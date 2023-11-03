@@ -13,6 +13,7 @@ public class ArenaDoorScript : MonoBehaviour
 
     [SerializeField] GameObject[] arenas;
     [SerializeField] GameObject[] bossArenas;
+    [SerializeField] GameObject[] randomArenas;
     [SerializeField] GameObject shop;
     [SerializeField] GameObject dorrbreakpaticle;
     int health = 3;
@@ -38,30 +39,42 @@ public class ArenaDoorScript : MonoBehaviour
         shake = 0.5f;
         if (health <= 0) {
             PlayerScript.instance.comboTime = 6;
+            GameManager.instance.randomArenaLeft--;
             SpawnNextArena();
             Destroy(gameObject);
-            GameManager.instance.doorsBroken++;
             Destroy(Instantiate(dorrbreakpaticle, transform.position, Quaternion.identity),5f);
-              
-            
-            
+            GameManager.instance.doorsBrokenTotal++;
         }
     }
 
     void SpawnNextArena()
     {
-        if ((GameManager.instance.doorsBroken + 1) % 5 == 0)
+        if (GameManager.instance.randomArenaLeft <= 0)
         {
-            Instantiate(shop, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
-        } else if ((GameManager.instance.doorsBroken) % 10 == 0 && GameManager.instance.doorsBroken != 0) {
-            Instantiate(bossArenas[Mathf.Min(GameManager.instance.boss, bossArenas.Length - 1)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
-            GameManager.instance.boss++;
-        } else {
-            GameObject arenaToSpawn = arenas[Random.Range(0, arenas.Length)];
-            while (arenaToSpawn == transform.parent.gameObject)
-                arenaToSpawn = arenas[Random.Range(0, arenas.Length)];
-            Instantiate(arenaToSpawn, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+            Instantiate(randomArenas[Random.Range(0, randomArenas.Length - 1)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+            GameManager.instance.randomArenaLeft = Random.Range(3, 14);
         }
+        else
+        {
+            GameManager.instance.doorsBroken++;
+            if ((GameManager.instance.doorsBroken + 1) % 5 == 0)
+            {
+                Instantiate(shop, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+            }
+            else if ((GameManager.instance.doorsBroken) % 10 == 0 && GameManager.instance.doorsBroken != 0)
+            {
+                Instantiate(bossArenas[Mathf.Min(GameManager.instance.boss, bossArenas.Length - 1)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+                GameManager.instance.boss++;
+            }
+            else
+            {
+                GameObject arenaToSpawn = arenas[Random.Range(0, arenas.Length - 1)];
+                while (arenaToSpawn == transform.parent.gameObject)
+                    arenaToSpawn = arenas[Random.Range(0, arenas.Length - 1)];
+                Instantiate(arenaToSpawn, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+            }
+        }
+        
     }
   
 }

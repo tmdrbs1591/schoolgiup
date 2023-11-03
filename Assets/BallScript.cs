@@ -17,6 +17,7 @@ public class BallScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         bounces++;
+        AudioScript.instance.PlaySound(transform.position, 16, Random.Range(0.8f, 1.0f), rigid.velocity.magnitude / 10);    
         if (rigid.velocity.magnitude > 80)
             rigid.velocity = Vector3.ClampMagnitude(rigid.velocity, 80);
 

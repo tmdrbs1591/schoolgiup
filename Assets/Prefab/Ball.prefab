@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2146551606001416887}
   - component: {fileID: 6543511109016921795}
+  - component: {fileID: 4983006461028881681}
   m_Layer: 9
   m_Name: Dynamic Sprite
   m_TagString: WeaponHurtBox
@@ -67,6 +68,21 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.29
+--- !u!114 &4983006461028881681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4033043685306895601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e0e395929883a4b95f319e73b5b3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tags:
+  - Projectile
+  - Penetrate
 --- !u!1 &9012652151448204182
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,7 +95,6 @@ GameObject:
   - component: {fileID: 6678909160653393734}
   - component: {fileID: 3711916039196886939}
   - component: {fileID: 7104446938413387983}
-  - component: {fileID: 8755053530649331450}
   - component: {fileID: 1181281998806718223}
   - component: {fileID: 6209149328662384295}
   m_Layer: 9
@@ -219,21 +234,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &8755053530649331450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9012652151448204182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83e0e395929883a4b95f319e73b5b3f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tags:
-  - Projectile
-  - Penetrate
 --- !u!114 &1181281998806718223
 MonoBehaviour:
   m_ObjectHideFlags: 0
