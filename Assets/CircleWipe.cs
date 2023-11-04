@@ -11,12 +11,15 @@ public class CircleWipe : MonoBehaviour
 
     public bool closing;
     public bool disable;
-    float radius;
+    public float radius;
+    public string scene;
+
+    public static CircleWipe instance;
 
     void Start()
     {
         material = new Material(shader);
-        material.SetFloat("_Radius", 0);
+        material.SetFloat("_Radius", radius);
     }
 
     public void Close()
@@ -29,13 +32,13 @@ public class CircleWipe : MonoBehaviour
         material.SetFloat("_Radius", radius);
         if (closing)
         {
-            radius -= Time.deltaTime * 15;
-            if (radius <= -1) SceneManager.LoadScene("SampleScene");
+            radius -= Time.unscaledDeltaTime * 15;
+            if (radius <= -1) SceneManager.LoadScene(scene);
         }
         else
         {
-            radius += Time.deltaTime * 12;
-            if (radius >= 10 && disable) Destroy(this);
+            radius += Time.unscaledDeltaTime * 12;
+            //if (radius >= 10 && disable) Destroy(this);
         }
         radius = Mathf.Clamp(radius, -1, 10);
     }

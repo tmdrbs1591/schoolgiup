@@ -18,6 +18,11 @@ public class SlimeSpitterScript : EnemyBase
 
     }
 
+    void DieLate()
+    {
+        Instantiate(coin, transform.position, Quaternion.identity);
+    }
+
     IEnumerator Attack() {
         if (attacking || dead || attackCooltime > 0) yield break;
         rigid.velocity = new Vector2(0, rigid.velocity.y);
@@ -26,14 +31,13 @@ public class SlimeSpitterScript : EnemyBase
         bool direction = PlayerScript.instance.transform.position.x > transform.position.x;
         spriteRenderer.flipX = !direction;
         yield return new WaitForSeconds(0.5f);
-        spriteRenderer.transform.localScale = new Vector3(targetScale.x * 0.8f,targetScale.y * 1.2f,1);
         rigid.velocity = new Vector2((direction?1:-1) * -5f, rigid.velocity.y);
         Instantiate(slime,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().velocity = new Vector2((direction?6:-6),10);
         spriteRenderer.sprite = openMouth;
         yield return new WaitForSeconds(0.3f);
         spriteRenderer.sprite = closeMouth;
         attacking = false;
-        attackCooltime = 3;
+        attackCooltime = 1;
         yield break;
     }
 
@@ -73,13 +77,6 @@ public class SlimeSpitterScript : EnemyBase
 
 
         spriteRenderer.flipX = nextMove == -1;
-    }
-
-    void HurtLate() {
-        if (dead) return;
-        StopCoroutine(attack);
-        attacking = false;
-        hurtBox.gameObject.SetActive(false);
     }
 
     public void Think()

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7141023089067902942}
   - component: {fileID: 8203508578464981915}
   m_Layer: 0
-  m_Name: MonsterSpawner
+  m_Name: SlimeSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,5 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 399ddaf646e210a4b877d8396f2f7b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnAfter: 0
+  spawnFor: 9
   enemyToSpawn:
   - {fileID: 6514142152264922631, guid: f72377e26e64e21418090c8b45900d5e, type: 3}

@@ -454,7 +454,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5133405745400133863}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.69, y: 0.27, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -564,14 +564,17 @@ MonoBehaviour:
   hurtBox: {fileID: 0}
   hitParticle: {fileID: 8224198577300562912, guid: fcf56511e1111b3439b407357cb265f8, type: 3}
   bloodParticle: {fileID: 0}
+  groundState: 0
   dead: 0
-  maxHealth: 15
+  maxHealth: 6
   health: 15
   burnDamage: 0
   hurtCooldown: 0
   nextMove: 0
   attacking: 0
   slime: {fileID: 3052164703156286015, guid: fe23df1f9b07c9b4d8880c68ffb9fb40, type: 3}
+  openMouth: {fileID: 1105045364, guid: 1f15c52517a36eb47b0cc2b5225f7cfd, type: 3}
+  closeMouth: {fileID: 1510722221, guid: 1f15c52517a36eb47b0cc2b5225f7cfd, type: 3}
 --- !u!1 &8310077240887468670
 GameObject:
   m_ObjectHideFlags: 0

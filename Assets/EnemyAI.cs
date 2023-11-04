@@ -43,8 +43,10 @@ public class EnemyAI : EnemyBase
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerScript.instance.transform.position);
         if (distanceToPlayer <= detectionRange)
         {
-            if (groundState == -1 && PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
+            if (groundState == -1 && PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f)) {
                 rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 20);
+                spriteRenderer.transform.localScale = new Vector3(targetScale.x * 0.7f,targetScale.y * 1.5f,1);
+            }
             if (groundState == 0) {
                 if (rigid.velocity.y > 0)
                     spriteRenderer.sprite = sprites[1];

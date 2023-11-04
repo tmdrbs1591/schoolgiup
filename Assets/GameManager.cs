@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject Btnptc;
     public Transform modebtn;
     public Transform setbtn;
+    public bool gameOver;
     void Start()
     {
         instance = this;

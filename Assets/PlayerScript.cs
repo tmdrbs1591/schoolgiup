@@ -167,6 +167,7 @@ public class PlayerScript : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.instance.gameOver) return;
         if (!GameManager.instance.shopping)
         {
             if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
@@ -220,7 +221,16 @@ public class PlayerScript : MonoBehaviour
         coolDown = 3;
         state = State.hurt;
         spd.y = 25;
-
+        if (health <= 0) {
+            camShake = 2f;
+            Time.timeScale = 0.2f;
+            GameManager.instance.gameOver = true;
+            rb.freezeRotation = false;
+            rb.angularVelocity = Random.Range(-500,500);
+            rb.gravityScale = 6;
+            rb.velocity = new Vector3(Random.Range(-10f,10f),20,0);
+            boxCollider.enabled = false;
+        }
     }
 
     IEnumerator Attack(bool force = false, bool dash = true) {
@@ -262,6 +272,7 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (GameManager.instance.gameOver) return;
         int moveInput = (int)Input.GetAxisRaw("Horizontal");
         if (GameManager.instance.shopping)
             moveInput = 0;

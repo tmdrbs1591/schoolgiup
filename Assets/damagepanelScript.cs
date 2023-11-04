@@ -21,7 +21,7 @@ public class damagepanelScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (health != PlayerScript.instance.health)
+        if (health != PlayerScript.instance.health && !GameManager.instance.gameOver)
         {
             if (PlayerScript.instance.health < health) Flash();
             health = PlayerScript.instance.health;

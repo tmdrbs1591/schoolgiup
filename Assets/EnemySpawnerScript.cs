@@ -5,12 +5,15 @@ using UnityEngine;
 public class EnemySpawnerScript : MonoBehaviour
 {
     int enemiesToSpawn;
+    [SerializeField] int spawnAfter;
+    [SerializeField] int spawnFor;
     EnemyBase spawnedEnemy;
     public GameObject[] enemyToSpawn;
 
     private void Start()
     {
-        enemiesToSpawn = Mathf.Min(3,1 + (int)Mathf.Floor(GameManager.instance.doorsBroken / 3));
+        enemiesToSpawn = Mathf.Min(3,1 + (int)Mathf.Floor((GameManager.instance.doorsBroken - spawnAfter) / 3));
+        if (enemiesToSpawn <= 0 || GameManager.instance.doorsBroken > spawnFor) Destroy(gameObject);
     }
 
     void Update()

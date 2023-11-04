@@ -632,7 +632,7 @@ Transform:
   - {fileID: 1559911571668637213}
   - {fileID: 6782680695186058803}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2030109632585491910
 Rigidbody2D:
@@ -691,7 +691,7 @@ MonoBehaviour:
   bloodParticle: {fileID: 0}
   groundState: 0
   dead: 0
-  maxHealth: 10
+  maxHealth: 2
   health: 10
   burnDamage: 0
   hurtCooldown: 0
