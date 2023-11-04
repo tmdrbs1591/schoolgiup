@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ public class ThiefTimeScript : MonoBehaviour
     
     [SerializeField]
     Slider timeSlider;
-    
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +31,8 @@ public class ThiefTimeScript : MonoBehaviour
         timeSlider.value = time;
         if (time < 0)
         {
+
+            
             GameManager.instance.coin /= 2;
 
 

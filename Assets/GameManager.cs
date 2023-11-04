@@ -14,7 +14,14 @@ public class GameManager : MonoBehaviour
     public bool shopping;
     public int boss;
     public int randomArenaLeft;
-    
+    public GameObject SettingPenel;
+    public GameObject MousePtc;
+    public GameObject Level1;
+    public GameObject Level2;
+    public GameObject ModPenel;
+    public GameObject Btnptc;
+    public Transform modebtn;
+    public Transform setbtn;
     void Start()
     {
         instance = this;
@@ -34,6 +41,15 @@ public class GameManager : MonoBehaviour
         {
             CloseShop();
         }
+        if (Input.GetMouseButtonDown(0))
+        {
+           
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0f;
+
+           
+            Destroy(Instantiate(MousePtc, mousePosition, Quaternion.identity),1f);
+        }
     }
     public void OpenShop()
     {
@@ -42,11 +58,49 @@ public class GameManager : MonoBehaviour
         shopping = true;
         AudioScript.instance.PlaySound(PlayerScript.instance.transform.position, 10);   
     }
+    public void ModPenelOpen()
+    {
+        ModPenel.SetActive(true);
+        Destroy(Instantiate(Btnptc, modebtn.transform.position, Quaternion.identity), 1.5f);
+        AudioScript.instance.PlaySound(transform.position, 19, Random.Range(0.8f, 1.0f), 1);
+        AudioScript.instance.PlaySound(transform.position, 18, Random.Range(0.8f, 1.0f), 1);
 
+    }
+    public void ModPenelClose()
+    {
+        ModPenel.SetActive(false);
+    }
    public void CloseShop()
     {
         shopPenel?.SetActive(false);
         shopping = false;
     }
-    
+    public void OpenSetting()
+    {
+        SettingPenel.SetActive(true);
+        Destroy(Instantiate(Btnptc, setbtn.transform.position, Quaternion.identity),1.5f);
+        AudioScript.instance.PlaySound(transform.position, 19, Random.Range(0.8f, 1.0f), 1);
+        AudioScript.instance.PlaySound(transform.position, 18, Random.Range(0.8f, 1.0f), 1);
+    }
+    public void CloseSetting()
+    {
+        SettingPenel.SetActive(false);
+    }
+    public void nextLevel()
+    {
+       
+            Level1.SetActive(false);    
+            Level2.SetActive(true);
+      
+       
+       
+           
+        
+    }
+    public void previousLevel()
+    {
+        Level1.SetActive(true);
+        Level2.SetActive(false);
+    }
+
 }

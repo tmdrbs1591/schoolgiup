@@ -2891,6 +2891,7 @@ MonoBehaviour:
   time: 40
   Thief: {fileID: 1182172951918229534}
   tpptc: {fileID: 8224198577300562912, guid: 31aad36f87accca479bdd84ff5347d00, type: 3}
+  Runtext: {fileID: 5625722856600415476}
   timeSlider: {fileID: 8565658554085201066}
 --- !u!1 &3404841551045087956
 GameObject:
@@ -3974,7 +3975,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000015259, y: -217}
+  m_AnchoredPosition: {x: 0.000015259, y: -196}
   m_SizeDelta: {x: 724.8631, y: 61.728577}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8565658554085201066
