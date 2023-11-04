@@ -354,6 +354,10 @@ public class PlayerScript : MonoBehaviour
     {
         if (collision.tag == "HurtBox")
             Hurt();
+        if (collision.tag == "Hurt Projectile") {
+            Hurt();
+            collision.gameObject.GetComponent<MonoBehaviour>().Invoke("Explode",0);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)

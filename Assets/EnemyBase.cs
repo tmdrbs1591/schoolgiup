@@ -19,11 +19,14 @@ public class EnemyBase : MonoBehaviour
     public int bloodSoundIndex;
     public GameObject coin;
     public bool allowHurt = true;
+    public Vector3 targetScale;
 
     public BoxCollider2D hurtBox;
 
     public GameObject hitParticle;
     public GameObject bloodParticle;
+
+    public int groundState = 0;
 
     public bool dead = false;
 
@@ -35,6 +38,7 @@ public class EnemyBase : MonoBehaviour
         healthBar.maxValue = maxHealth;
         healthBar.value = (float)maxHealth;
         hurtCooldown = 0.5f;
+        targetScale = spriteRenderer.transform.localScale;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -58,7 +62,7 @@ public class EnemyBase : MonoBehaviour
 
     void Update()
     {
-        spriteRenderer.transform.localScale = Vector3.Lerp(spriteRenderer.transform.localScale, new Vector3(1.2479f, 1.2479f, 1), Time.deltaTime * 5);
+        spriteRenderer.transform.localScale = Vector3.Lerp(spriteRenderer.transform.localScale, targetScale, Time.deltaTime * 5);
         if (dead)
         {
             if (rigid.velocity.y <= -100) Destroy(gameObject);
@@ -134,5 +138,16 @@ public class EnemyBase : MonoBehaviour
         else {
             PlayerScript.instance.Hit(spawnPos, damage, false, hitstun, burnDamage <= 0);
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (Mathf.Abs(rigid.velocity.y) < 0.03f) //check velocity.y is 0
+            groundState = (rigid.velocity.y > 0 ? 1 : -1);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        groundState = 0;
     }
 }

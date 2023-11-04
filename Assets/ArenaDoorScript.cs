@@ -27,6 +27,7 @@ public class ArenaDoorScript : MonoBehaviour
     {
         if (hurtCooldown > 0) hurtCooldown -= Time.deltaTime;
         if (shake > 0) shake -= Time.deltaTime;
+        if (shake < 0) shake = 0;
         transform.GetChild(0).localPosition = new Vector2(Random.Range(-shake * 0.4f, shake * 0.4f), + Random.Range(-shake * 0.4f, shake * 0.4f));
     }
 
@@ -51,7 +52,7 @@ public class ArenaDoorScript : MonoBehaviour
     {
         if (GameManager.instance.randomArenaLeft <= 0)
         {
-            Instantiate(randomArenas[Random.Range(0, randomArenas.Length - 1)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+            Instantiate(randomArenas[Random.Range(0, randomArenas.Length)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
             GameManager.instance.randomArenaLeft = Random.Range(3, 14);
         }
         else
@@ -63,14 +64,14 @@ public class ArenaDoorScript : MonoBehaviour
             }
             else if ((GameManager.instance.doorsBroken) % 10 == 0 && GameManager.instance.doorsBroken != 0)
             {
-                Instantiate(bossArenas[Mathf.Min(GameManager.instance.boss, bossArenas.Length - 1)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
+                Instantiate(bossArenas[Mathf.Min(GameManager.instance.boss, bossArenas.Length)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
                 GameManager.instance.boss++;
             }
             else
             {
-                GameObject arenaToSpawn = arenas[Random.Range(0, arenas.Length - 1)];
+                GameObject arenaToSpawn = arenas[Random.Range(0, arenas.Length)];
                 while (arenaToSpawn == transform.parent.gameObject)
-                    arenaToSpawn = arenas[Random.Range(0, arenas.Length - 1)];
+                    arenaToSpawn = arenas[Random.Range(0, arenas.Length)];
                 Instantiate(arenaToSpawn, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
             }
         }

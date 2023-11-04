@@ -8,6 +8,7 @@ TagManager:
   - WeaponHurtBox
   - VCam
   - Enemy
+  - Hurt Projectile
   layers:
   - Default
   - TransparentFX

@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyAI : EnemyBase
+public class SlimeSpitterScript : EnemyBase
 {
     [SerializeField] int nextMove;
     public bool attacking;
+    float attackCooltime;
     IEnumerator attack;
-
-    [SerializeField] Sprite[] sprites;
+    [SerializeField] GameObject slime;
+    [SerializeField] Sprite openMouth;
+    [SerializeField] Sprite closeMouth;
 
     void Start()
     {
@@ -18,22 +19,21 @@ public class EnemyAI : EnemyBase
     }
 
     IEnumerator Attack() {
-        if (attacking || dead) yield break;
+        if (attacking || dead || attackCooltime > 0) yield break;
+        rigid.velocity = new Vector2(0, rigid.velocity.y);
+        attackCooltime = 5;
         attacking = true;
         bool direction = PlayerScript.instance.transform.position.x > transform.position.x;
         spriteRenderer.flipX = !direction;
-        rigid.velocity = new Vector2((direction?-1:1) * 2, rigid.velocity.y);
-        spriteRenderer.sprite = sprites[4];
-        yield return new WaitForSeconds(0.8f);
-        spriteRenderer.sprite = sprites[3];
-        hurtBox.gameObject.SetActive(true);
-        hurtBox.transform.localPosition = new Vector3((direction?0.5f:-0.5f),0,0);
-        for (float i = 1; i > 0; i -= Time.deltaTime) {
-            rigid.velocity = new Vector2((direction?1:-1) * i * 8, rigid.velocity.y);
-            if (i < 0.5f) hurtBox.gameObject.SetActive(false);
-            yield return null;
-        }
+        yield return new WaitForSeconds(0.5f);
+        spriteRenderer.transform.localScale = new Vector3(targetScale.x * 0.8f,targetScale.y * 1.2f,1);
+        rigid.velocity = new Vector2((direction?1:-1) * -5f, rigid.velocity.y);
+        Instantiate(slime,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().velocity = new Vector2((direction?6:-6),10);
+        spriteRenderer.sprite = openMouth;
+        yield return new WaitForSeconds(0.3f);
+        spriteRenderer.sprite = closeMouth;
         attacking = false;
+        attackCooltime = 3;
         yield break;
     }
 
@@ -41,29 +41,24 @@ public class EnemyAI : EnemyBase
     {
         if (attacking || dead) return;
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerScript.instance.transform.position);
-        if (distanceToPlayer <= detectionRange)
+        if (distanceToPlayer <= detectionRange && attackCooltime <= 0)
         {
-            if (groundState == -1 && PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
+            if (PlayerScript.instance.transform.position.y - transform.position.y > 0.5f && PlayerScript.instance.groundState == -1 && (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= 5 || rigid.velocity.magnitude < 0.2f))
                 rigid.velocity = new Vector2(nextMove * moveSpeed * 1.2f, 20);
-            if (groundState == 0) {
-                if (rigid.velocity.y > 0)
-                    spriteRenderer.sprite = sprites[1];
-                else
-                    spriteRenderer.sprite = sprites[2];
-
+            if (Mathf.Abs(rigid.velocity.y) > 0.2f)
                 return;
-            }
-            spriteRenderer.sprite = sprites[0];
             if (Mathf.Abs(PlayerScript.instance.transform.position.x - transform.position.x) <= hitRange) {
                 attack = Attack();
                 StartCoroutine(attack);
                 return;
             }
-            if (PlayerScript.instance.transform.position.x > transform.position.x) 
-                nextMove = 1;
-            else
-                nextMove = -1;
+                if (PlayerScript.instance.transform.position.x > transform.position.x) 
+                    nextMove = 1;
+                else
+                    nextMove = -1;
         }
+
+        if (attackCooltime > 0) attackCooltime -= Time.fixedDeltaTime;
 
 
         rigid.velocity = new Vector2(nextMove * moveSpeed, rigid.velocity.y);
