@@ -19,6 +19,7 @@ public class SillyEnemyScript : EnemyBase
     IEnumerator Attack() {
         if (attacking || dead) yield break;
         attacking = true;
+        PlayerScript.instance.camShake += 0.5f;
         spriteRenderer.sprite = sprites[1];
         AudioScript.instance.PlaySound(transform.position, 18, Random.Range(0.7f, 1.1f), 1,transform);
         bool direction = PlayerScript.instance.transform.position.x < transform.position.x;
