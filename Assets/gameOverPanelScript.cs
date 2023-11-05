@@ -16,11 +16,7 @@ public class gameOverPanelScript : MonoBehaviour
         
         if (gameOverTimer >= 3)
             rect.anchoredPosition = Vector2.Lerp(rect.anchoredPosition,Vector2.zero,Time.unscaledDeltaTime * 3);
-        if (gameOverTimer >= 8) {
-            CircleWipe transition = Camera.main.gameObject.GetComponent<CircleWipe>();
-            transition.radius = 10;
-            transition.scene = "Title";
-            transition.Close();
-        }
+        
+        
     }
 }

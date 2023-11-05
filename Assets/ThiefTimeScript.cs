@@ -12,21 +12,21 @@ public class ThiefTimeScript : MonoBehaviour
     EnemyBase Thief;
     [SerializeField]
     GameObject tpptc;
-    
+    TMP_Text tx;
     [SerializeField]
     Slider timeSlider;
    
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Thief.dead)
-            Destroy(this);  
+            Destroy(this);      
         time -= Time.deltaTime;
         timeSlider.value = time;
         if (time < 0)
