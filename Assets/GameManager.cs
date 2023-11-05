@@ -23,10 +23,14 @@ public class GameManager : MonoBehaviour
     public Transform modebtn;
     public Transform setbtn;
     public bool gameOver;
+    public bool inScary;
+    Color bgColor;
+
     void Start()
     {
         instance = this;
         randomArenaLeft = Random.Range(3, 14);
+        bgColor = Camera.main.backgroundColor;
     }
 
     public void AddScore(int _score, bool comboAffected = false)
@@ -51,6 +55,8 @@ public class GameManager : MonoBehaviour
            
             Destroy(Instantiate(MousePtc, mousePosition, Quaternion.identity),1f);
         }
+        Camera.main.backgroundColor = inScary ? Color.black:bgColor;
+        PlayerScript.instance.lighting.SetActive(inScary);
     }
     public void OpenShop()
     {
@@ -89,14 +95,8 @@ public class GameManager : MonoBehaviour
     }
     public void nextLevel()
     {
-       
-            Level1.SetActive(false);    
-            Level2.SetActive(true);
-      
-       
-       
-           
-        
+        Level1.SetActive(false);    
+        Level2.SetActive(true);
     }
     public void previousLevel()
     {

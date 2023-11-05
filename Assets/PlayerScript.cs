@@ -30,6 +30,7 @@ public class PlayerScript : MonoBehaviour
 
     [SerializeField]GameObject textEffect;
     [SerializeField] TrailRenderer trail;
+    public GameObject lighting;
 
     Vector2 spd;
     float coolDown;
