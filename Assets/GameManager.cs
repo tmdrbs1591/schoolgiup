@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public bool ready;
     public static GameManager instance;
     public int doorsBroken;
     public int doorsBrokenTotal;
@@ -29,8 +31,14 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         instance = this;
-        randomArenaLeft = Random.Range(3, 14);
+        randomArenaLeft = Random.Range(2, 4);
         bgColor = Camera.main.backgroundColor;
+        Invoke("Ready", 0.1f);
+    }
+
+    void Ready()
+    {
+        ready = true;
     }
 
     public void AddScore(int _score, bool comboAffected = false)
@@ -55,9 +63,11 @@ public class GameManager : MonoBehaviour
            
             Destroy(Instantiate(MousePtc, mousePosition, Quaternion.identity),1f);
         }
+        if (SceneManager.GetActiveScene().name == "Title") return;
         Camera.main.backgroundColor = inScary ? Color.black:bgColor;
         PlayerScript.instance.lighting.SetActive(inScary);
     }
+
     public void OpenShop()
     {
         if (shopping) return;

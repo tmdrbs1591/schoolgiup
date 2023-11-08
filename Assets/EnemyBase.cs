@@ -24,11 +24,14 @@ public class EnemyBase : MonoBehaviour
     public BoxCollider2D hurtBox;
 
     public GameObject hitParticle;
+   
     public GameObject bloodParticle;
 
     public int groundState = 0;
 
     public bool dead = false;
+
+    public bool destroyOnKill = false;
 
     void Awake()
     {
@@ -96,6 +99,7 @@ public class EnemyBase : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
         Instantiate(coin, transform.position, Quaternion.identity);
         Invoke("DieLate",0);
+        if (destroyOnKill) Destroy(gameObject);
     }
 
     public void Hurt(Transform collisionTransform, bool forceDamage = false, float damage = 0, bool _hitstun = true) {
@@ -125,7 +129,9 @@ public class EnemyBase : MonoBehaviour
             health -= damage;
         }
         healthBar.value = (float)health;
-        Destroy(Instantiate(hitParticle,transform.position,Quaternion.identity), 1);
+        Destroy(Instantiate(hitParticle, transform.position, Quaternion.identity), 1);
+      
+
         if (burnDamage > 0) {
             Destroy(Instantiate(bloodParticle, transform.position, Quaternion.identity), 3);
             AudioScript.instance.PlaySound(transform.position, bloodSoundIndex, Random.Range(0.8f, 1.0f));

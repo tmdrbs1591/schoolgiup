@@ -7,7 +7,8 @@ public class HealthTowerScript : MonoBehaviour
      
 {
     bool entered;
-    public GameObject healeffect; 
+    public GameObject healeffect;
+   
     private void OnTriggerEnter2D(Collider2D collision)
     {
         entered = true;
@@ -21,7 +22,7 @@ public class HealthTowerScript : MonoBehaviour
         {
             AudioScript.instance.PlaySound(PlayerScript.instance.transform.position, 11);
             PlayerScript.instance.health = 8;
-            Destroy(Instantiate(healeffect, PlayerScript.instance.transform.position, Quaternion.identity), 3f);
+            Destroy(Instantiate(healeffect, PlayerScript.instance.healpos.transform.position, Quaternion.identity), 3f);
 
 
         }

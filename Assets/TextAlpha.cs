@@ -12,6 +12,7 @@ public class TextAlpha : MonoBehaviour
     float time = 0f;
     [SerializeField]
     float F_time = 1f;
+
     // Start is called before the first frame update
     void Start()
     {

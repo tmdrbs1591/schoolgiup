@@ -78,7 +78,7 @@ public class MagicianScript : EnemyBase
 
 
         if (HitTime > 0) HitTime -= Time.fixedDeltaTime;
-        if ((HitTime <= 0 || Count >= 9) && allowHurt)
+        if ((HitTime <= 0 || Count >= 11) && allowHurt)
         {
             allowHurt = false;
             Count = -1;
@@ -116,10 +116,10 @@ public class MagicianScript : EnemyBase
            
         }
         transform.localPosition = dest;
-        if (Count >= 5)
+        if (Count >= 3)
         {
             allowHurt = true;
-            HitTime = 5;
+            HitTime = 3;
         }
     }
     

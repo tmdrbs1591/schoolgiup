@@ -21,7 +21,7 @@ public class SillyEnemyScript : EnemyBase
         attacking = true;
         PlayerScript.instance.camShake += 0.5f;
         spriteRenderer.sprite = sprites[1];
-        AudioScript.instance.PlaySound(transform.position, 18, Random.Range(0.7f, 1.1f), 1,transform);
+        AudioScript.instance.PlaySound(transform.position, 18, Random.Range(1f, 1.3f), 1,transform);
         bool direction = PlayerScript.instance.transform.position.x < transform.position.x;
         spriteRenderer.flipX = !direction;
         rigid.velocity = new Vector2((direction?-1:1) * 2f, rigid.velocity.y);

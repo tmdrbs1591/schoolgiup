@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CircleWipe : MonoBehaviour
 {
-    public Shader shader;
-
-    public Material material;
+    Material material;
 
     public bool closing;
     public bool disable;
@@ -18,7 +17,7 @@ public class CircleWipe : MonoBehaviour
 
     void Start()
     {
-        material = new Material(shader);
+        material = gameObject.GetComponent<Image>().material;
         material.SetFloat("_Radius", radius);
     }
 
@@ -26,25 +25,26 @@ public class CircleWipe : MonoBehaviour
     {
         closing = true;
     }
+    public void SceneTransition(string _scene)
+    {
+        scene = _scene;
+        closing = true;
+    }
 
     private void Update()
     {
+        if (!GameManager.instance.ready) return;
         material.SetFloat("_Radius", radius);
         if (closing)
         {
-            radius -= Time.unscaledDeltaTime * 15;
-            if (radius <= -1) SceneManager.LoadScene(scene);
+            radius -= Time.unscaledDeltaTime * 1.5f;
+            if (radius <= 0) SceneManager.LoadScene(scene);
         }
         else
         {
-            radius += Time.unscaledDeltaTime * 12;
+            radius += Time.unscaledDeltaTime * 1.2f;
             //if (radius >= 10 && disable) Destroy(this);
         }
-        radius = Mathf.Clamp(radius, -1, 10);
-    }
-
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(source, destination, material);
+        radius = Mathf.Clamp(radius, 0, 1);
     }
 }

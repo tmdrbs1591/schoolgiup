@@ -139,6 +139,7 @@ MonoBehaviour:
   bloodParticle: {fileID: 0}
   groundState: 0
   dead: 0
+  destroyOnKill: 0
   maxHealth: 20
   health: 20
   burnDamage: 0

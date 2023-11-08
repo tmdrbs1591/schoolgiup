@@ -16,7 +16,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float gravity;
     [SerializeField] float speed;
     [SerializeField] float jumpSpeed;
-
+     public Transform healpos;
     public int health = 3;
 
     [SerializeField]SpriteRenderer sprite;
@@ -241,7 +241,7 @@ public class PlayerScript : MonoBehaviour
         {
             trail.emitting = true;
             AudioScript.instance.PlaySound(transform.position, currentWeaponStat.soundIndex, Random.Range(0.9f, 1.1f), 1);
-            if (dash) movespeed += 20;
+            if (dash) movespeed += 14;
             weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
             attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
             sprite.transform.localScale = new Vector3(1.3f, 0.8f, 1);

@@ -35,6 +35,7 @@ public class ArenaDoorScript : MonoBehaviour
         //if (hurtCooldown > 0) return;
         hurtCooldown = 0.5f;
         PlayerScript.instance.camShake = 0.4f;
+        AudioScript.instance.PlaySound(transform.position, 19, Random.Range(0.8f, 1.0f), 1);
         health--;
         Destroy(Instantiate(dorrbreakpaticle, transform.position, Quaternion.identity), 5f);
         shake = 0.5f;
@@ -50,19 +51,19 @@ public class ArenaDoorScript : MonoBehaviour
 
     void SpawnNextArena()
     {
-        if (GameManager.instance.randomArenaLeft <= 0)
+        if (GameManager.instance.randomArenaLeft <= 0 && (GameManager.instance.doorsBroken - 1) % 10 != 0)
         {
             Instantiate(randomArenas[Random.Range(0, randomArenas.Length)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
-            GameManager.instance.randomArenaLeft = Random.Range(3, 14);
+            GameManager.instance.randomArenaLeft = Random.Range(2, 4);
         }
         else
         {
             GameManager.instance.doorsBroken++;
-            if ((GameManager.instance.doorsBroken + 1) % 5 == 0)
+            if ((GameManager.instance.doorsBroken) % 5 == 0)
             {
                 Instantiate(shop, transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
             }
-            else if ((GameManager.instance.doorsBroken) % 10 == 0 && GameManager.instance.doorsBroken != 0)
+            else if ((GameManager.instance.doorsBroken - 1) % 10 == 0 && GameManager.instance.doorsBroken != 1)
             {
                 Instantiate(bossArenas[Mathf.Min(GameManager.instance.boss, bossArenas.Length)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
                 GameManager.instance.boss++;

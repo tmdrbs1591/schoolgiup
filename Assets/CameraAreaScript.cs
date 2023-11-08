@@ -17,5 +17,6 @@ public class CameraAreaScript : MonoBehaviour
         if (collision.tag == "Player")
             confiner.m_BoundingShape2D = gameObject.GetComponent<PolygonCollider2D>();
 
+
     }
 }

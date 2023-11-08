@@ -12,6 +12,7 @@ public class ThiefTimeScript : MonoBehaviour
     EnemyBase Thief;
     [SerializeField]
     GameObject tpptc;
+    [SerializeField]
     TMP_Text tx;
     [SerializeField]
     Slider timeSlider;
@@ -32,7 +33,8 @@ public class ThiefTimeScript : MonoBehaviour
         if (time < 0)
         {
 
-            
+
+            tx.gameObject.SetActive(true);
             GameManager.instance.coin /= 2;
 
 
