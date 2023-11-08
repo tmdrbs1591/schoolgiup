@@ -67,6 +67,7 @@ public class PlayerScript : MonoBehaviour
     public bool skilling = false;
 
     int currentWeapon = 0;
+    public bool GetAcom = false;
     public WeaponStat currentWeaponStat;
 
     void Start()

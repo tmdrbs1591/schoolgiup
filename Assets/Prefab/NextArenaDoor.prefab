@@ -215,5 +215,6 @@ MonoBehaviour:
   - {fileID: 253864053944869460, guid: 45cfc33434c945a40afaa0f80dd71885, type: 3}
   - {fileID: 1015394883058775951, guid: 0b82707da467fde4ea122afee24def98, type: 3}
   - {fileID: 2509605033900581774, guid: 62c799885a8e0ff4cbc2e5275bd4c459, type: 3}
+  - {fileID: 2509605033900581774, guid: d82eff5508ce3944d822013138f0c113, type: 3}
   shop: {fileID: 2509605033900581774, guid: dad0650b66dd2cb449f50cd41de45316, type: 3}
   dorrbreakpaticle: {fileID: 6414356965754425502, guid: d702d250e9628a142987494c9b1e5108, type: 3}
