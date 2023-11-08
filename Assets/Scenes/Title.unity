@@ -531,7 +531,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b216604eb6aba424d8cd43706bda87d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: be2399a52bb70e141bb593a622e68372, type: 2}
   closing: 0
   disable: 0
   radius: 0
@@ -1954,7 +1953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd42d6e5998f32a4ca09714b07a37a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartBtnPtc: {fileID: 8224198577300562912, guid: 14226941e7bb300488eee5ba78ce3d16, type: 3}
+  StartBtnPtc: {fileID: 1250201152801508, guid: dd46de4320f3d1b4087b5f9c0a24ab36, type: 3}
 --- !u!1 &555392295
 GameObject:
   m_ObjectHideFlags: 0
