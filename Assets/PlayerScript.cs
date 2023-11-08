@@ -50,6 +50,7 @@ public class PlayerScript : MonoBehaviour
     bool jumped = false;
     float attackTimer;
     float attackCooldown;
+    float attackBuffer;
     int attackOrder;
     float skillCooldown;
 
@@ -57,7 +58,7 @@ public class PlayerScript : MonoBehaviour
 
     public float camShake;
 
-    bool[] inputBuffer = new bool[2];
+    bool[] inputBuffer = new bool[1];
 
     public int comboCount;
     public float comboTime;
@@ -94,7 +95,7 @@ public class PlayerScript : MonoBehaviour
         if (spawnPosition == Vector3.zero) spawnPosition = weaponSprite.transform.position;
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
-        float stunTime = 0.1f;
+        float stunTime = 0.06f;
         if (spawnPosition == weaponSprite.transform.position)
         {
             movespeed -= 5;
@@ -105,7 +106,7 @@ public class PlayerScript : MonoBehaviour
                     Destroy(Instantiate(currentWeaponStat.critHitEffect, spawnPosition, Quaternion.identity),2);
                 AudioScript.instance.PlaySound(transform.position, 3, Random.Range(0.8f, 1.0f), 1);
                 shake += 0.2f;
-                stunTime += 0.1f;
+                stunTime += 0.07f;
             }
             else
         {
@@ -115,7 +116,7 @@ public class PlayerScript : MonoBehaviour
         if (kill) {
             comboCount++;
             comboTime = 6;
-            shake += 0.4f;
+            shake += 0.3f;
         } else {
             comboTime += 1;
             shake += 0.2f;
@@ -173,7 +174,7 @@ public class PlayerScript : MonoBehaviour
         if (!GameManager.instance.shopping)
         {
             if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
-            if (Input.GetButtonDown("Fire1")) inputBuffer[1] = true;
+            if (Input.GetButtonDown("Fire1")) attackBuffer = 0.3f;
 
             if (Input.GetButtonDown("1")) ChangeWeapon(0);
             if (Input.GetButtonDown("2")) ChangeWeapon(1);
@@ -201,6 +202,7 @@ public class PlayerScript : MonoBehaviour
         if (attackTimer > 0) attackTimer -= Time.deltaTime;
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
         if (skillCooldown > 0) skillCooldown -= Time.deltaTime;
+        if (attackBuffer > 0) attackBuffer -= Time.deltaTime;
 
         hurtBox.gameObject.SetActive(attackTimer > 0);
 
@@ -237,6 +239,7 @@ public class PlayerScript : MonoBehaviour
 
     IEnumerator Attack(bool force = false, bool dash = true) {
         if (attackCooldown > 0 && !force) yield break;
+        attackBuffer = 0;
         attackCooldown = currentWeaponStat.cooldown;
         if (currentWeaponStat.projectile == null)
         {
@@ -293,7 +296,7 @@ public class PlayerScript : MonoBehaviour
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
                     AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
-                if (inputBuffer[1])
+                if (attackBuffer > 0)
                     StartCoroutine(Attack());
                 if (moveInput == 0)
                 {
@@ -339,7 +342,7 @@ public class PlayerScript : MonoBehaviour
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
                     AudioScript.instance.PlaySound(transform.position,0,Random.Range(0.9f,1.1f),1);
                 }
-                if (inputBuffer[1])
+                if (attackBuffer > 0)
                     StartCoroutine(Attack()); 
                 spd.x = movespeed * dir;
                 spd.y -= gravity;

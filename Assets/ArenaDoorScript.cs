@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ArenaDoorScript : MonoBehaviour
 {
@@ -16,12 +17,17 @@ public class ArenaDoorScript : MonoBehaviour
     [SerializeField] GameObject[] randomArenas;
     [SerializeField] GameObject shop;
     [SerializeField] GameObject dorrbreakpaticle;
-    int health = 3;
+    [SerializeField] Slider healthBar;
+    float health = 1;
     float shake;
     
 
     
     float hurtCooldown = 0;
+
+    void Start() {
+        health = 2 + GameManager.instance.doorsBroken / 4f;
+    }
     
     void Update()
     {
@@ -36,16 +42,22 @@ public class ArenaDoorScript : MonoBehaviour
         hurtCooldown = 0.5f;
         PlayerScript.instance.camShake = 0.4f;
         AudioScript.instance.PlaySound(transform.position, 19, Random.Range(0.8f, 1.0f), 1);
-        health--;
+        PlayerScript.instance.DamageCalculation();
+        health -= PlayerScript.instance.damageOutput;
+        healthBar.value = 1 - (health / (2 + GameManager.instance.doorsBroken / 4f));
         Destroy(Instantiate(dorrbreakpaticle, transform.position, Quaternion.identity), 5f);
         shake = 0.5f;
-        if (health <= 0) {
-            PlayerScript.instance.comboTime = 6;
+        if (health <= 0)
+        {
+            PlayerScript.instance.Hit(transform.position, PlayerScript.instance.damageOutput, true, true);
             GameManager.instance.randomArenaLeft--;
             SpawnNextArena();
             Destroy(gameObject);
             Destroy(Instantiate(dorrbreakpaticle, transform.position, Quaternion.identity),5f);
             GameManager.instance.doorsBrokenTotal++;
+        }
+        else {
+            PlayerScript.instance.Hit(transform.position, PlayerScript.instance.damageOutput, false, true);
         }
     }
 
@@ -54,7 +66,7 @@ public class ArenaDoorScript : MonoBehaviour
         if (GameManager.instance.randomArenaLeft <= 0 && (GameManager.instance.doorsBroken - 1) % 10 != 0)
         {
             Instantiate(randomArenas[Random.Range(0, randomArenas.Length)], transform.parent.parent).transform.position = transform.position + Vector3.right / 2;
-            GameManager.instance.randomArenaLeft = Random.Range(2, 4);
+            GameManager.instance.randomArenaLeft = Random.Range(4, 14);
         }
         else
         {
