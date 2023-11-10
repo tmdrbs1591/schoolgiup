@@ -58,7 +58,7 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    public int maxHealth = 2;
+    public float maxHealth = 2;
     public float health;
     public float burnDamage;
     float burnTimer;
@@ -128,6 +128,7 @@ public class EnemyBase : MonoBehaviour
         {
             health -= damage;
         }
+        healthBar.maxValue = maxHealth;
         healthBar.value = (float)health;
         Destroy(Instantiate(hitParticle, transform.position, Quaternion.identity), 1);
       

@@ -83,7 +83,6 @@ public class EnemyAI : EnemyBase
     }
 
     void HurtLate() {
-        if (dead) return;
         StopCoroutine(attack);
         attacking = false;
         hurtBox.gameObject.SetActive(false);

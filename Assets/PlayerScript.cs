@@ -84,7 +84,7 @@ public class PlayerScript : MonoBehaviour
 
     public void DamageCalculation() {
         crit = (int)Mathf.Min(comboCount,50) >= Random.Range(0, 100);
-        damageOutput = currentWeaponStat.damage * (crit ? 3:1) * damageMultiplier;
+        damageOutput = currentWeaponStat.damage * (crit ? 2:1) * damageMultiplier;
     }
 
     bool crit = false;
@@ -220,9 +220,10 @@ public class PlayerScript : MonoBehaviour
 
     public void Hurt() {
         if (coolDown > 0) return;
+        AudioScript.instance.PlaySound(transform.position, 25, Random.Range(0.8f, 1.0f), 1);
         camShake = 0.5f;
         health--;
-        coolDown = 3;
+        coolDown = 1;
         state = State.hurt;
         spd.y = 25;
         if (health <= 0) {

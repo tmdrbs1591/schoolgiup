@@ -547,7 +547,7 @@ Transform:
   - {fileID: 3901543288742955982}
   - {fileID: 6017374066927936127}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &4130358392765739390
 Rigidbody2D:
@@ -641,7 +641,7 @@ MonoBehaviour:
   attackTime: 0
   healthBar: {fileID: 7559164194728758459}
   scoreAward: 0
-  dieSoundIndex: 0
+  dieSoundIndex: 24
   bloodSoundIndex: 0
   coin: {fileID: 0}
   allowHurt: 1
@@ -651,6 +651,7 @@ MonoBehaviour:
   bloodParticle: {fileID: 0}
   groundState: 0
   dead: 0
+  destroyOnKill: 0
   maxHealth: 2147483647
   health: 0
   burnDamage: 0

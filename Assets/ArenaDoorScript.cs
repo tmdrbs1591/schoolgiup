@@ -19,6 +19,7 @@ public class ArenaDoorScript : MonoBehaviour
     [SerializeField] GameObject dorrbreakpaticle;
     [SerializeField] Slider healthBar;
     float health = 1;
+    float maxHealth;
     float shake;
     
 
@@ -26,7 +27,8 @@ public class ArenaDoorScript : MonoBehaviour
     float hurtCooldown = 0;
 
     void Start() {
-        health = 2 + GameManager.instance.doorsBroken / 4f;
+        health = 2 + GameManager.instance.doorsBroken / 2f;
+        maxHealth = health;
     }
     
     void Update()
@@ -44,7 +46,7 @@ public class ArenaDoorScript : MonoBehaviour
         AudioScript.instance.PlaySound(transform.position, 19, Random.Range(0.8f, 1.0f), 1);
         PlayerScript.instance.DamageCalculation();
         health -= PlayerScript.instance.damageOutput;
-        healthBar.value = 1 - (health / (2 + GameManager.instance.doorsBroken / 4f));
+        healthBar.value = 1 - health/maxHealth;
         Destroy(Instantiate(dorrbreakpaticle, transform.position, Quaternion.identity), 5f);
         shake = 0.5f;
         if (health <= 0)

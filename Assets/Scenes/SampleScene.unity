@@ -3397,6 +3397,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e544397ef77e9bb41b339032f26577b1, type: 3}
   - {fileID: 8300000, guid: 7721d9435d9f5a143ac9dd13f0802c1d, type: 3}
   - {fileID: 8300000, guid: 1fc8e878e294793479109cb8cb257d3d, type: 3}
+  - {fileID: 8300000, guid: 6365367cef1a08141aa752123eb53371, type: 3}
+  - {fileID: 8300000, guid: 8bfdc21ac48f3d345a1092ab6bee79d8, type: 3}
   audioObject: {fileID: 4800001047859223314, guid: b6a14173e5fe63a4c9656e1295689fce, type: 3}
 --- !u!4 &493068428
 Transform:
@@ -3585,7 +3587,7 @@ Camera:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -4171,6 +4173,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 359124363}
     m_Modifications:
+    - target: {fileID: 2334483998606362175, guid: 61b71934434096c4295e7df99bb40613, type: 3}
+      propertyPath: bloodSoundIndex
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 3775491770051844885, guid: 61b71934434096c4295e7df99bb40613, type: 3}
       propertyPath: m_Name
       value: SillyFake
@@ -15442,7 +15448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2041407653
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16232,6 +16238,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1054470163440392572, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2290659989370073477, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -16284,9 +16294,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4922099705047627602, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5366350888528639467, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5676148370805083862, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
+      propertyPath: damage
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6147962555156707544, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
       propertyPath: health
@@ -16304,6 +16322,10 @@ PrefabInstance:
       propertyPath: normalHitEffect2
       value: 
       objectReference: {fileID: 8898372448309985589, guid: 0f5ebf984a9d97c4f8fbb062f4667030, type: 3}
+    - target: {fileID: 7395872746839084673, guid: 5ed5a196b5e60854287c6edbb6398eb0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.59
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

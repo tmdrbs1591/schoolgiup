@@ -26,6 +26,8 @@ public class EnemySpawnerScript : MonoBehaviour
     {
         int rand = Random.Range(0, enemyToSpawn.Length);
         spawnedEnemy = Instantiate(enemyToSpawn[rand], transform.position, Quaternion.identity).GetComponent<EnemyBase>();
+        spawnedEnemy.maxHealth += GameManager.instance.doorsBroken / 4f;
+        spawnedEnemy.health = spawnedEnemy.maxHealth;
         enemiesToSpawn--;
         if (enemiesToSpawn <= 0) Destroy(gameObject);
     }
