@@ -28,7 +28,11 @@ public class Shopitemscript : MonoBehaviour
         {
             AudioScript.instance.PlaySound(PlayerScript.instance.transform.position,9);
             GameManager.instance.coin -= price;
-            PlayerScript.instance.ChangeWeapon(weapon);
+            if (PlayerScript.instance.otherWeapon == -1)
+                PlayerScript.instance.otherWeapon = weapon;
+            else {
+                PlayerScript.instance.ChangeWeapon(weapon);
+            }
         }
     }
 }

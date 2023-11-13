@@ -67,7 +67,8 @@ public class PlayerScript : MonoBehaviour
 
     public bool skilling = false;
 
-    int currentWeapon = 0;
+    public int currentWeapon = 0;
+    public int otherWeapon = -1;
     public bool GetAcom = false;
     public WeaponStat currentWeaponStat;
 
@@ -77,9 +78,7 @@ public class PlayerScript : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
-        ChangeWeapon(1);
-
-        
+        ChangeWeapon(0);
     }
 
     public void DamageCalculation() {
@@ -117,6 +116,7 @@ public class PlayerScript : MonoBehaviour
             comboCount++;
             comboTime = 6;
             shake += 0.3f;
+            if (GameManager.instance.maxCombo < comboCount) GameManager.instance.maxCombo = comboCount;
         } else {
             comboTime += 1;
             shake += 0.2f;
@@ -176,13 +176,15 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
             if (Input.GetButtonDown("Fire1")) attackBuffer = 0.3f;
 
-            if (Input.GetButtonDown("1")) ChangeWeapon(0);
-            if (Input.GetButtonDown("2")) ChangeWeapon(1);
-            if (Input.GetButtonDown("3")) ChangeWeapon(2);
-            if (Input.GetButtonDown("Skill") && skillCooldown <= 0)
+            //if (Input.GetButtonDown("1")) ChangeWeapon(0);
+            //if (Input.GetButtonDown("2")) ChangeWeapon(1);
+            //if (Input.GetButtonDown("3")) ChangeWeapon(2);
+
+            if (Input.GetButtonDown("Skill") && otherWeapon != -1)
             {
-                skillCooldown = currentWeaponStat.skillCooldown;
-                StartCoroutine(Skill());
+                int keep = currentWeapon;
+                ChangeWeapon(otherWeapon);
+                otherWeapon = keep;
             }
         }
 
@@ -246,11 +248,11 @@ public class PlayerScript : MonoBehaviour
         {
             trail.emitting = true;
             AudioScript.instance.PlaySound(transform.position, currentWeaponStat.soundIndex, Random.Range(0.9f, 1.1f), 1);
-            if (dash) movespeed += 14;
             weaponAnimation.SetTrigger("Attack" + (attackOrder + 1));
             attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
             sprite.transform.localScale = new Vector3(1.3f, 0.8f, 1);
             yield return new WaitForSeconds(currentWeaponStat.attackDelay);
+            if (dash) movespeed += 14;
             hurtBox.transform.localPosition = Vector3.right * dir * 1.2f;
             attackTimer = currentWeaponStat.duration;
         } else

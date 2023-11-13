@@ -21,7 +21,7 @@ public class HealthTowerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C) && entered)
         {
             AudioScript.instance.PlaySound(PlayerScript.instance.transform.position, 11);
-            PlayerScript.instance.health = 8;
+            PlayerScript.instance.health = 3;
             Destroy(Instantiate(healeffect, PlayerScript.instance.healpos.transform.position, Quaternion.identity), 3f);
 
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,7 +27,9 @@ public class GameManager : MonoBehaviour
     public Transform setbtn;
     public bool gameOver;
     public bool inScary;
+    public Sprite[] weaponSprites;
     Color bgColor;
+    public int maxCombo;
 
     void Start()
     {
