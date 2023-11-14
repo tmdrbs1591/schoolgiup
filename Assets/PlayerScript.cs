@@ -5,12 +5,11 @@ using Cinemachine.Utility;
 using Cinemachine;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class PlayerScript : MonoBehaviour
 {
     public static PlayerScript instance;
-
-    
     
 
     [SerializeField] float gravity;
@@ -58,7 +57,7 @@ public class PlayerScript : MonoBehaviour
 
     public float camShake;
 
-    bool[] inputBuffer = new bool[1];
+    float jumpBuffer;
 
     public int comboCount;
     public float comboTime;
@@ -71,6 +70,15 @@ public class PlayerScript : MonoBehaviour
     public int otherWeapon = -1;
     public bool GetAcom = false;
     public WeaponStat currentWeaponStat;
+    InputProvider inputProvider;
+
+    void OnEnable() {   
+        inputProvider = new InputProvider();
+        inputProvider.Enable();
+        inputProvider.JumpPerformed += SetJump;
+        inputProvider.AttackPerformed += SetAttack;
+        inputProvider.SwitchPerformed += SetSwitch;
+    }
 
     void Start()
     {
@@ -95,10 +103,6 @@ public class PlayerScript : MonoBehaviour
         AudioScript.instance.PlaySound(transform.position,1,Random.Range(0.8f,1.0f),1);
         float shake = 0;
         float stunTime = 0.06f;
-        if (spawnPosition == weaponSprite.transform.position)
-        {
-            movespeed -= 5;
-        }
         if (crit)
             {
                 if (particle)
@@ -125,7 +129,7 @@ public class PlayerScript : MonoBehaviour
         tex.Initialize(damage, crit);
         camShake = shake;
         if (hitstun)
-            StartCoroutine(Hitstun(stunTime));
+            StartCoroutine(Hitstun(stunTime,spawnPosition == hurtBox.transform.position));
     }
 
     public void ChangeWeapon(int weapon) {
@@ -141,10 +145,20 @@ public class PlayerScript : MonoBehaviour
         attackOrder = (attackOrder + 1) % currentWeaponStat.maxAnimation;
     }
 
-    IEnumerator Hitstun(float seconds) {
+    IEnumerator Hitstun(float seconds, bool isMelee) {
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(seconds);
         Time.timeScale = 1;
+        if (isMelee) {
+            if (inputProvider.Attacking()) {
+                movespeed += 4;
+                attackTimer += 0.2f;
+            } else {
+                spd.y = 10;
+                movespeed = -9;
+                if (groundState == 0) jumped = true;
+            }
+        }
     }
 
     IEnumerator Skill()
@@ -168,24 +182,35 @@ public class PlayerScript : MonoBehaviour
         yield return null;
     }
 
+    void SetJump(InputAction.CallbackContext context) {
+        if (!GameManager.instance.shopping)
+        jumpBuffer = 0.2f;
+    }
+
+    void SetAttack(InputAction.CallbackContext context) {
+        if (!GameManager.instance.shopping)
+            attackBuffer = 0.2f;
+    }
+
+    void SetSwitch(InputAction.CallbackContext context) {
+        if (Input.GetButtonDown("Skill") && otherWeapon != -1)
+        {
+            int keep = currentWeapon;
+            ChangeWeapon(otherWeapon);
+            otherWeapon = keep;
+        }
+    }
+
     private void Update()
     {
         if (GameManager.instance.gameOver) return;
         if (!GameManager.instance.shopping)
         {
-            if (Input.GetButtonDown("Jump")) inputBuffer[0] = true;
-            if (Input.GetButtonDown("Fire1")) attackBuffer = 0.3f;
 
             //if (Input.GetButtonDown("1")) ChangeWeapon(0);
             //if (Input.GetButtonDown("2")) ChangeWeapon(1);
             //if (Input.GetButtonDown("3")) ChangeWeapon(2);
 
-            if (Input.GetButtonDown("Skill") && otherWeapon != -1)
-            {
-                int keep = currentWeapon;
-                ChangeWeapon(otherWeapon);
-                otherWeapon = keep;
-            }
         }
 
         if (Time.timeScale != 0)
@@ -205,6 +230,7 @@ public class PlayerScript : MonoBehaviour
         if (attackCooldown > 0) attackCooldown -= Time.deltaTime;
         if (skillCooldown > 0) skillCooldown -= Time.deltaTime;
         if (attackBuffer > 0) attackBuffer -= Time.deltaTime;
+        if (jumpBuffer > 0) jumpBuffer -= Time.deltaTime;
 
         hurtBox.gameObject.SetActive(attackTimer > 0);
 
@@ -281,7 +307,7 @@ public class PlayerScript : MonoBehaviour
     void FixedUpdate()
     {
         if (GameManager.instance.gameOver) return;
-        int moveInput = (int)Input.GetAxisRaw("Horizontal");
+        int moveInput = (int)inputProvider.Horizontal();
         if (GameManager.instance.shopping)
             moveInput = 0;
         switch (state)
@@ -290,8 +316,9 @@ public class PlayerScript : MonoBehaviour
                 spd.y = 0;
                 jumped = false;
                 if (groundState == 0) state = State.air; 
-                if (inputBuffer[0])
+                if (jumpBuffer > 0)
                 {
+                    jumpBuffer = 0;
                     state = State.air;
                     spd.y = jumpSpeed;
                     groundState = 0;
@@ -304,9 +331,9 @@ public class PlayerScript : MonoBehaviour
                 if (moveInput == 0)
                 {
                     if (movespeed < 0)
-                        movespeed = 0;
+                        movespeed = Mathf.Min(movespeed + 1,0);
                     else if (movespeed > 0)
-                        movespeed -= 1f;
+                        movespeed = Mathf.Max(movespeed - 1,0);
                 } else {
                     if (dir != moveInput)
                     {
@@ -338,8 +365,9 @@ public class PlayerScript : MonoBehaviour
                 //{
                 //    spd.y -= gravity;
                 //}
-                if (inputBuffer[0] && jumped)
+                if (jumpBuffer > 0 && jumped)
                 {
+                    jumpBuffer = 0;
                     jumped = false;
                     spd.y = jumpSpeed;
                     sprite.transform.localScale = new Vector3(0.7f,1.4f,1);
@@ -358,9 +386,6 @@ public class PlayerScript : MonoBehaviour
         rb.velocity = spd;
         if (spd.magnitude < 15)
             trail.emitting = false;
-
-        for (int i = 0; i < inputBuffer.Length; i++) inputBuffer[i] = false;
-
     }
 
     private void OnCollisionStay2D(Collision2D collision)

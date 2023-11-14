@@ -529,7 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 
-  damage: 20
+  damage: 5
   cooldown: 0.4
   duration: 0.2
   maxAnimation: 2
@@ -596,6 +596,7 @@ MonoBehaviour:
   gravity: 1.3
   speed: 1.2
   jumpSpeed: 20
+  healpos: {fileID: 0}
   health: 8
   sprite: {fileID: 8853740009686679253}
   weaponHolder: {fileID: 8442087725646224248}
@@ -614,6 +615,9 @@ MonoBehaviour:
   comboTime: 0
   damageOutput: 0
   skilling: 0
+  currentWeapon: 0
+  otherWeapon: -1
+  GetAcom: 0
   currentWeaponStat: {fileID: 0}
   damageMultiplier: 1
 --- !u!50 &8198453654000344515
@@ -1167,7 +1171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 
-  damage: 80
+  damage: 50
   cooldown: 0.3
   duration: 0.2
   maxAnimation: 2
@@ -1494,7 +1498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Bomb
-  damage: 15
+  damage: 7
   cooldown: 0.7
   duration: 0.2
   maxAnimation: -2

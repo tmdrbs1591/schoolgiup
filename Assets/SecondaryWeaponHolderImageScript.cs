@@ -16,9 +16,9 @@ public class SecondaryWeaponHolderImageScript : MonoBehaviour
     void Update()
     {
         if (PlayerScript.instance.otherWeapon == -1)
-            gameObject.SetActive(false);
+            imager.enabled = false;
         else {
-            gameObject.SetActive(true);
+            imager.enabled = true;
             imager.sprite = GameManager.instance.weaponSprites[PlayerScript.instance.otherWeapon];
         }
     }
